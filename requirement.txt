@@ -1,0 +1,8 @@
+django-cors-headers
+djangorestframework-jwt
+djangorestframework
+alpha-vantage
+pandas
+psycopg2
+polygon-api-client
+

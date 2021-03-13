@@ -1,0 +1,13 @@
+.DS_store
+
+venv
+
+templates
+
+**/migrations/**
+
+__pycache__
+
+*.pyc
+
+.idea
