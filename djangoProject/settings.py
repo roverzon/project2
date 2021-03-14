@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'stock_market_indexes.apps.StockMarketIndexesConfig',
     'users',
     'corsheaders',
+    'django_celery_monitor',
 ]
 
 REST_FRAMEWORK = {

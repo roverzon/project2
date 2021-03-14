@@ -10,9 +10,7 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'send-report-every-morning': {
-        'task': 'watchlist.tasks.send_watchlist_report',
-        'schedule': crontab(minute=30, hour=8),
+        'task': 'watchlists.tasks.send_watchlist_report',
+        'schedule': crontab(),
     },
 }
-
-app.conf.timezone = 'UTC'

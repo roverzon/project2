@@ -16,10 +16,12 @@ class Ticker(models.Model):
     last_updated_utc = models.DateTimeField()
     created_at = models.DateTimeField(default=timezone.now)
 
+    def get_all_tickers_from_polygon(self):
+        return
+
 
 class TickerDetail(models.Model):
-    symbol = models.CharField(max_length=100, unique=True)
-    name = models.CharField(max_length=100)
+    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE)
     description = models.CharField(max_length=255)
     exchange = models.CharField(max_length=255)
     exchangeSymbol = models.CharField(max_length=255)
@@ -27,8 +29,7 @@ class TickerDetail(models.Model):
     sector = models.CharField(max_length=255)
     tags = ArrayField(models.CharField(max_length=100))
     similar = ArrayField(models.CharField(max_length=100))
-    active = models.BooleanField()
-    list_date = models.DateTimeField()
+    list_date = models.DateTimeField(default='1900-01-01')
     updated_date = models.DateTimeField()
 
 

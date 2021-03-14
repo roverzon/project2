@@ -16,17 +16,4 @@ Here's how you did till now:
 
 @app.task
 def send_watchlist_report():
-    for user in get_user_model().objects.all():
-        ws = WatchList.objects.filter(user=user)
-        if not ws:
-            continue
-
-        template = Template(REPORT_TEMPLATE)
-
-        send_mail(
-            'Your QuickPublisher Activity',
-            template.render(context=Context({'posts': ws})),
-            'from@quickpublisher.dev',
-            [user.email],
-            fail_silently=False,
-        )
+    print('run run run')
