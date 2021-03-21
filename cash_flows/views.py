@@ -1,15 +1,26 @@
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser
 from rest_framework import status
-
-from cash_flows.models import CashFlow
+from cash_flows.models import CashFlow, cash_flow_fields_map
+from cash_flows.services import alpha_vantage_cash_flow_api
+from tickers.models import Ticker
 from cash_flows.serializers import CashFlowSerializer
-from rest_framework.decorators import api_view
-
-from alpha_vantage.fundamentaldata import FundamentalData
-from datetime import datetime
-
+from cash_flows.tasks import alphavantage_cashflow_annualReport_async, alphavantage_cashflow_quarterlyReport_async
+from rest_framework.decorators import api_view, permission_classes
 from collections import OrderedDict
+from random import sample
+
+
+@api_view(['GET'])
+def func1(request):
+    sample_num = 20
+    symbols = [(t.symbol, ) for t in Ticker.objects.all()]
+    if sample_num > 0:
+        symbols = sample(symbols, sample_num)
+    else:
+        symbols = symbols
+    jobs = alphavantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
+    jobs.apply_async()
+    return JsonResponse({'message': 'sent to the background'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -76,111 +87,14 @@ def cashflow_detail(request, pk):
 
 
 @api_view(['GET'])
-def cashflow_init_annual(request):
-
+def alpha_vantage_cashflow_annual(request, symbol):
     if request.method == 'GET':
-
-        symbol = request.GET.get('symbol')
-
-        data = FundamentalData(key='I7WB8M63PERU90OY', output_format='pandas')
-        cashflows, vasymbol = data.get_cash_flow_annual(symbol=symbol)
-
-        for fical in cashflows['fiscalDateEnding']:
-            cashflow = cashflows[cashflows['fiscalDateEnding'] == fical]
-
-            for col in cashflow.columns:
-                if col not in ['fiscalDateEnding', 'reportedCurrency']:
-                    if cashflow[col].values[0] == 'None':
-                        cashflow[col] = 0.0
-                    else:
-                        pass
-                else:
-                    pass
-
-            cash = CashFlow(
-                symbol=symbol,
-                report_type='annualReport',
-                fiscal_date_ending= datetime.strptime(cashflow['fiscalDateEnding'].values[0], '%Y-%m-%d'),
-                fiscal_year=cashflow['fiscalDateEnding'].values[0].split('-')[0],
-                reported_currency=cashflow['reportedCurrency'].values[0],
-                investments=cashflow['investments'].values[0],
-                change_in_liabilities=cashflow['changeInLiabilities'].values[0],
-                cashflow_from_investment=cashflow['cashflowFromInvestment'].values[0],
-                cashflow_from_financing=cashflow['cashflowFromFinancing'].values[0],
-                other_cashflow_from_financing=cashflow['otherCashflowFromFinancing'].values[0],
-                change_in_operating_activities=cashflow['changeInOperatingActivities'].values[0],
-                net_income=cashflow['netIncome'].values[0],
-                change_in_cash=cashflow['changeInCash'].values[0],
-                operating_cashflow=cashflow['operatingCashflow'].values[0],
-                other_operating_cashflow=cashflow['otherOperatingCashflow'].values[0],
-                depreciation=cashflow['depreciation'].values[0],
-                dividend_payout=cashflow['dividendPayout'].values[0],
-                stock_sale_and_purchase=cashflow['stockSaleAndPurchase'].values[0],
-                change_in_inventory=cashflow['changeInInventory'].values[0],
-                change_in_account_receivables=cashflow['changeInAccountReceivables'].values[0],
-                change_in_net_income=cashflow['changeInNetIncome'].values[0],
-                capital_expenditures=cashflow['capitalExpenditures'].values[0],
-                change_in_receivables=cashflow['changeInReceivables'].values[0],
-                change_in_exchange_rate=cashflow['changeInExchangeRate'].values[0],
-                change_in_cash_and_cash_equivalents=cashflow['changeInCashAndCashEquivalents'].values[0]
-            )
-
-            cash.save()
-
-        return JsonResponse({'message': 'Annualy Data Save successlly'},  status=status.HTTP_200_OK)
+        alpha_vantage_cash_flow_api(symbol=symbol, report_type='annualReports')
+        return JsonResponse({'message': 'AlphaVantage Annual Report saved successfully'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def cashflow_init_quarterly(request):
-
+def alpha_vantage_cashflow_quarterly(request, symbol):
     if request.method == 'GET':
-        symbol = request.GET.get('symbol')
-
-        data = FundamentalData(key='I7WB8M63PERU90OY', output_format='pandas')
-        qcashflows, vasymbol = data.get_cash_flow_quarterly(symbol=symbol)
-
-        for fical in qcashflows['fiscalDateEnding']:
-            cashflow = qcashflows[qcashflows['fiscalDateEnding'] == fical]
-
-            for col in cashflow.columns:
-                if col not in ['fiscalDateEnding', 'reportedCurrency']:
-                    if cashflow[col].values[0] == 'None':
-                        cashflow[col] = 0.0
-                    else:
-                        pass
-                else:
-                    pass
-
-            cash = CashFlow(
-                symbol=symbol,
-                report_type='annualReport',
-                fiscal_date_ending= datetime.strptime(cashflow['fiscalDateEnding'].values[0], '%Y-%m-%d'),
-                fiscal_year=cashflow['fiscalDateEnding'].values[0].split('-')[0],
-                reported_currency=cashflow['reportedCurrency'].values[0],
-                investments=cashflow['investments'].values[0],
-                change_in_liabilities=cashflow['changeInLiabilities'].values[0],
-                cashflow_from_investment=cashflow['cashflowFromInvestment'].values[0],
-                other_cashflow_from_investment=cashflow['otherCashflowFromInvestment'].values[0],
-                net_borrowings=cashflow['netBorrowings'].values[0],
-                cashflow_from_financing=cashflow['cashflowFromFinancing'].values[0],
-                other_cashflow_from_financing=cashflow['otherCashflowFromFinancing'].values[0],
-                change_in_operating_activities=cashflow['changeInOperatingActivities'].values[0],
-                net_income=cashflow['netIncome'].values[0],
-                change_in_cash=cashflow['changeInCash'].values[0],
-                operating_cashflow=cashflow['operatingCashflow'].values[0],
-                other_operating_cashflow=cashflow['otherOperatingCashflow'].values[0],
-                depreciation=cashflow['depreciation'].values[0],
-                dividend_payout=cashflow['dividendPayout'].values[0],
-                stock_sale_and_purchase=cashflow['stockSaleAndPurchase'].values[0],
-                change_in_inventory=cashflow['changeInInventory'].values[0],
-                change_in_account_receivables=cashflow['changeInAccountReceivables'].values[0],
-                change_in_net_income=cashflow['changeInNetIncome'].values[0],
-                capital_expenditures=cashflow['capitalExpenditures'].values[0],
-                change_in_receivables=cashflow['changeInReceivables'].values[0],
-                change_in_exchange_rate=cashflow['changeInExchangeRate'].values[0],
-                change_in_cash_and_cash_equivalents=cashflow['changeInCashAndCashEquivalents'].values[0]
-            )
-
-            cash.save()
-
-        return JsonResponse({'message': 'Quarterly Data Save successlly'},  status=status.HTTP_200_OK)
+        alpha_vantage_cash_flow_api(symbol=symbol, report_type='quarterlyReports')
+        return JsonResponse({'message': 'AlphaVantage Quarterly Report saved successfully'},  status=status.HTTP_200_OK)

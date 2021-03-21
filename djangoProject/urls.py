@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^', include('watchlists.urls')),
     url(r'^', include('tickers.urls')),
     url(r'^', include('users.urls')),
+    url(r'^', include('pgfinancials.urls')),
     url(r'^api-token-auth$', obtain_jwt_token),
     url(r'^api-token-refresh$', refresh_jwt_token),
 ]

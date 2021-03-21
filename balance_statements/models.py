@@ -4,114 +4,136 @@ from django.db import models
 class BalanceSheet(models.Model):
     symbol = models.CharField(max_length=10, blank=False, default='')
     report_type = models.CharField(max_length=255, blank=False, default='')
-    fiscal_date_ending = models.DateTimeField(default='1900-01-01')
-    fiscal_year = models.CharField(max_length=10,default='1900-01-01')
-    reported_currency = models.CharField(max_length=255, blank=False, default='USD')
-    total_assets = models.FloatField(default=0.0)
-    intangible_assets = models.FloatField(default=0.0)
-    earning_assets = models.FloatField(default=0.0)
-    other_current_assets = models.FloatField(default=0.0)
-    total_liabilities = models.FloatField(default=0.0)
-    total_shareholder_equity = models.FloatField(default=0.0)
-    deferred_long_term_liabilities = models.FloatField(default=0.0)
-    other_current_liabilities = models.FloatField(default=0.0)
-    common_stock = models.FloatField(default=0.0)
-    retained_earnings = models.FloatField(default=0.0)
-    other_liabilities = models.FloatField(default=0.0)
-    goodwill = models.FloatField(default=0.0)
-    other_assets = models.FloatField(default=0.0)
-    cash = models.FloatField(default=0.0)
-    total_current_liabilities = models.FloatField(default=0.0)
-    short_term_debt = models.FloatField(default=0.0)
-    current_long_term_debt = models.FloatField(default=0.0)
-    other_shareholder_equity = models.FloatField(default=0.0)
-    property_plant_equipment = models.FloatField(default=0.0)
-    total_current_assets = models.FloatField(default=0.0)
-    long_term_investment = models.FloatField(default=0.0)
-    net_tangible_assets = models.FloatField(default=0.0)
-    short_term_investment = models.FloatField(default=0.0)
-    net_receivables = models.FloatField(default=0.0)
-    long_term_debt = models.FloatField(default=0.0)
-    inventory = models.FloatField(default=0.0)
-    accounts_payable = models.FloatField(default=0.0)
-    total_permanent_equity = models.FloatField(default=0.0)
-    additional_paid_in_capital = models.FloatField(default=0.0)
-    common_stock_total_equity = models.FloatField(default=0.0)
-    preferred_stock_total_equity = models.FloatField(default=0.0)
-    retained_earnings_total_equity = models.FloatField(default=0.0)
-    treasury_stock = models.FloatField(default=0.0)
-    accumulated_amortization = models.FloatField(default=0.0)
-    other_non_current_assets = models.FloatField(default=0.0)
-    deferred_long_term_aseet_charges = models.FloatField(default=0.0)
-    total_non_current_assets = models.FloatField(default=0.0)
-    capital_lease_obligations = models.FloatField(default=0.0)
-    total_long_term_debt = models.FloatField(default=0.0)
-    other_non_current_liabilities = models.FloatField(default=0.0)
-    deferred_long_term_asset_charges = models.FloatField(default=0.0)
-    total_non_current_liabilities = models.FloatField(default=0.0)
-    negative_goodwill = models.FloatField(default=0.0)
-    warrants = models.FloatField(default=0.0)
-    preferred_stock_redeemable = models.FloatField(default=0.0)
-    capital_surplus = models.FloatField(default=0.0)
-    liabilities_and_shareholder_equity = models.FloatField(default=0.0)
-    cash_and_short_term_investments = models.FloatField(default=0.0)
-    accumulated_depreciation = models.FloatField(default=0.0)
-    common_stock_shares_outstanding = models.FloatField(default=0.0)
+    fiscal_year = models.CharField(max_length=10, default='1900-01-01')
+    balance_statement_field1 = models.CharField(max_length=255, default='USD')
+    balance_statement_field2 = models.FloatField(default=0.0)
+    balance_statement_field3 = models.FloatField(default=0.0)
+    balance_statement_field4 = models.FloatField(default=0.0)
+    balance_statement_field5 = models.FloatField(default=0.0)
+    balance_statement_field6 = models.FloatField(default=0.0)
+    balance_statement_field7 = models.FloatField(default=0.0)
+    balance_statement_field8 = models.FloatField(default=0.0)
+    balance_statement_field10 = models.FloatField(default=0.0)
+    balance_statement_field11 = models.FloatField(default=0.0)
+    balance_statement_field12 = models.FloatField(default=0.0)
+    balance_statement_field13 = models.FloatField(default=0.0)
+    balance_statement_field14 = models.FloatField(default=0.0)
+    balance_statement_field15 = models.FloatField(default=0.0)
+    balance_statement_field16 = models.FloatField(default=0.0)
+    balance_statement_field17 = models.FloatField(default=0.0)
+    balance_statement_field18 = models.FloatField(default=0.0)
+    balance_statement_field19 = models.FloatField(default=0.0)
+    balance_statement_field20 = models.FloatField(default=0.0)
+    balance_statement_field21 = models.FloatField(default=0.0)
+    balance_statement_field22 = models.FloatField(default=0.0)
+    balance_statement_field23 = models.FloatField(default=0.0)
+    balance_statement_field24 = models.FloatField(default=0.0)
+    balance_statement_field25 = models.FloatField(default=0.0)
+    balance_statement_field26 = models.FloatField(default=0.0)
+    balance_statement_field27 = models.FloatField(default=0.0)
+    balance_statement_field28 = models.FloatField(default=0.0)
+    balance_statement_field29 = models.FloatField(default=0.0)
+    balance_statement_field30 = models.FloatField(default=0.0)
+    balance_statement_field31 = models.FloatField(default=0.0)
+    balance_statement_field32 = models.FloatField(default=0.0)
+    balance_statement_field33 = models.FloatField(default=0.0)
+    balance_statement_field34 = models.FloatField(default=0.0)
+    balance_statement_field35 = models.FloatField(default=0.0)
+    balance_statement_field36 = models.FloatField(default=0.0)
+    balance_statement_field37 = models.FloatField(default=0.0)
+    balance_statement_field38 = models.FloatField(default=0.0)
+    balance_statement_field39 = models.FloatField(default=0.0)
+    balance_statement_field40 = models.FloatField(default=0.0)
+    balance_statement_field41 = models.FloatField(default=0.0)
+    balance_statement_field42 = models.FloatField(default=0.0)
+    balance_statement_field43 = models.FloatField(default=0.0)
+    balance_statement_field44 = models.FloatField(default=0.0)
+    balance_statement_field45 = models.FloatField(default=0.0)
+    balance_statement_field46 = models.FloatField(default=0.0)
+    balance_statement_field47 = models.FloatField(default=0.0)
+    balance_statement_field48 = models.FloatField(default=0.0)
+    balance_statement_field49 = models.FloatField(default=0.0)
+    balance_statement_field50 = models.FloatField(default=0.0)
+    balance_statement_field51 = models.FloatField(default=0.0)
+    balance_statement_field52 = models.FloatField(default=0.0)
+    balance_statement_field53 = models.FloatField(default=0.0)
+    balance_statement_field54 = models.FloatField(default=0.0)
+    balance_statement_field55 = models.FloatField(default=0.0)
+    balance_statement_field56 = models.FloatField(default=0.0)
+    balance_statement_field57 = models.FloatField(default=0.0)
+    balance_statement_field58 = models.FloatField(default=0.0)
+    balance_statement_field59 = models.FloatField(default=0.0)
+    balance_statement_field60 = models.FloatField(default=0.0)
+    balance_statement_field61 = models.FloatField(default=0.0)
+    balance_statement_field62 = models.FloatField(default=0.0)
+    balance_statement_field63 = models.FloatField(default=0.0)
+    balance_statement_field64 = models.DateTimeField(default='1900-01-01')
 
-    def to_dict(self):
-        return {'symbol':self.symbol,
-                'report_type':self.report_type,
-                'fiscal_date_ending':self.fiscal_date_ending,
-                'reported_currency':self.reported_currency,
-                'total_assets':self.total_assets,
-                'intangible_assets':self.intangible_assets,
-                'earning_assets':self.earning_assets,
-                'other_current_assets':self.other_current_assets,
-                'total_liabilities':self.total_liabilities,
-                'total_shareholder_equity':self.total_shareholder_equity,
-                'deferred_long_term_liabilities':self.deferred_long_term_liabilities,
-                'other_current_liabilities':self.other_current_liabilities,
-                'common_stock':self.common_stock,
-                'retained_earnings':self.retained_earnings,
-                'other_liabilities':self.other_liabilities,
-                'goodwill':self.goodwill,
-                'other_assets':self.other_assets,
-                'cash':self.cash,
-                'total_current_liabilities':self.total_current_liabilities,
-                'short_term_debt':self.short_term_debt,
-                'current_long_term_debt':self.current_long_term_debt,
-                'other_shareholder_equity':self.other_shareholder_equity,
-                'property_plant_equipment':self.property_plant_equipment,
-                'total_current_assets':self.total_current_assets,
-                'long_term_investment':self.long_term_investment,
-                'net_tangible_assets':self.net_tangible_assets,
-                'short_term_investment':self.short_term_investment,
-                'net_receivables':self.net_receivables,
-                'long_term_debt':self.long_term_debt,
-                'inventory':self.inventory,
-                'accounts_payable':self.accounts_payable,
-                'total_permanent_equity':self.total_permanent_equity,
-                'additional_paid_in_capital':self.additional_paid_in_capital,
-                'common_stock_total_equity':self.common_stock_total_equity,
-                'preferred_stock_total_equity':self.preferred_stock_total_equity,
-                'retained_earnings_total_equity':self.retained_earnings_total_equity,
-                'treasury_stock':self.treasury_stock,
-                'accumulated_amortization':self.accumulated_amortization,
-                'other_non_current_assets':self.other_non_current_assets,
-                'deferred_long_term_aseet_charges':self.deferred_long_term_aseet_charges,
-                'total_non_current_assets':self.total_non_current_assets,
-                'capital_lease_obligations':self.capital_lease_obligations,
-                'total_long_term_debt':self.total_long_term_debt,
-                'other_non_current_liabilities':self.other_non_current_liabilities,
-                'deferred_long_term_asset_charges':self.deferred_long_term_asset_charges,
-                'total_non_current_liabilities':self.total_non_current_liabilities,
-                'negative_goodwill':self.negative_goodwill,
-                'warrants':self.warrants,
-                'preferred_stock_redeemable':self.preferred_stock_redeemable,
-                'capital_surplus':self.capital_surplus,
-                'liabilities_and_shareholder_equity':self.liabilities_and_shareholder_equity,
-                'cash_and_short_term_investments':self.cash_and_short_term_investments,
-                'accumulated_depreciation':self.accumulated_depreciation,
-                'common_stock_shares_outstanding':self.common_stock_shares_outstanding
-        }
+    class Meta:
+        unique_together = ('symbol', 'balance_statement_field64')
 
+
+balance_sheet_map = {'reportedCurrency':'balance_statement_field1',
+                     'totalAssets':'balance_statement_field2',
+                     'intangibleAssets':'balance_statement_field3',
+                     'earningAssets':'balance_statement_field4',
+                     'otherCurrentAssets':'balance_statement_field5',
+                     'totalLiabilities':'balance_statement_field6',
+                     'totalShareholderEquity':'balance_statement_field7',
+                     'deferredLongTermLiabilities':'balance_statement_field8',
+                     'otherCurrentLiabilities':'balance_statement_field9',
+                     'commonStock':'balance_statement_field10',
+                     'retainedEarnings':'balance_statement_field11',
+                     'otherLiabilities':'balance_statement_field12',
+                     'goodwill':'balance_statement_field13',
+                     'otherAssets':'balance_statement_field14',
+                     'cash':'balance_statement_field15',
+                     'totalCurrentLiabilities':'balance_statement_field16',
+                     'shortTermDebt':'balance_statement_field17',
+                     'currentLongTermDebt':'balance_statement_field18',
+                     'otherShareholderEquity':'balance_statement_field19',
+                     'propertyPlantEquipment':'balance_statement_field20',
+                     'totalCurrentAssets':'balance_statement_field21',
+                     'longTermInvestment':'balance_statement_field22',
+                     'netTangibleAssets':'balance_statement_field23',
+                     'shortTermInvestment':'balance_statement_field24',
+                     'netReceivables':'balance_statement_field25',
+                     'longTermDebt':'balance_statement_field26',
+                     'inventory':'balance_statement_field27',
+                     'accountsPayable':'balance_statement_field28',
+                     'totalPermanentEquity':'balance_statement_field29',
+                     'additionalPaidInCapital':'balance_statement_field30',
+                     'commonStockTotalEquity':'balance_statement_field31',
+                     'preferredStockTotalEquity':'balance_statement_field32',
+                     'retainedEarningsTotalEquity':'balance_statement_field33',
+                     'treasuryStock':'balance_statement_field34',
+                     'accumulatedAmortization':'balance_statement_field35',
+                     'otherNonCurrentAssets':'balance_statement_field36',
+                     'totalNonCurrentAssets':'balance_statement_field37',
+                     'capitalLeaseObligations':'balance_statement_field38',
+                     'totalLongTermDebt':'balance_statement_field39',
+                     'otherNonCurrentLiabilities':'balance_statement_field40',
+                     'deferredLongTermAssetCharges':'balance_statement_field41',
+                     'totalNonCurrentLiabilities':'balance_statement_field42',
+                     'negativeGoodwill':'balance_statement_field43',
+                     'warrants':'balance_statement_field44',
+                     'preferredStockRedeemable':'balance_statement_field45',
+                     'capitalSurplus':'balance_statement_field46',
+                     'liabilitiesAndShareholderEquity':'balance_statement_field47',
+                     'cashAndShortTermInvestments':'balance_statement_field48',
+                     'accumulatedDepreciation':'balance_statement_field49',
+                     'commonStockSharesOutstanding':'balance_statement_field50',
+                     'cashAndCashEquivalentsAtCarryingValue':'balance_statement_field51',
+                     'currentNetReceivables':'balance_statement_field52',
+                     'accumulatedDepreciationAmortizationPPE':'balance_statement_field53',
+                     'intangibleAssetsExcludingGoodwill':'balance_statement_field54',
+                     'investments':'balance_statement_field55',
+                     'longTermInvestments':'balance_statement_field56',
+                     'shortTermInvestments':'balance_statement_field57',
+                     'otherNonCurrrentAssets':'balance_statement_field58',
+                     'currentAccountsPayable':'balance_statement_field59',
+                     'deferredRevenue':'balance_statement_field60',
+                     'currentDebt':'balance_statement_field61',
+                     'longTermDebtNoncurrent':'balance_statement_field62',
+                     'shortLongTermDebtTotal':'balance_statement_field63',
+                     'fiscalDateEnding':'balance_statement_field64'}

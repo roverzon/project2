@@ -1,12 +1,13 @@
 from django.http.response import JsonResponse
+from multiprocessing import Pool
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from datetime import datetime
 from polygon import RESTClient
 from tickers.models import Ticker, TickerDetail
+from tickers.tasks import tickers_all_detail
 import requests
-
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -23,25 +24,25 @@ def polygon_all_tickers(request):
     rest = 0
     all_tickers = []
 
-    for t in range(limit_query_times):
-        if ncount == 0:
-            rep = requests.get(url).json()
-            next_page_path = rep['next_page_path']
-            all_tickers.extend(rep['results'])
-        else:
-            url = default_host + next_page_path
-            rep = requests.get(url).json()
-            all_tickers.extend(rep['results'])
-            if rest > 0 and 'next_page_path' in rep:
+    with RESTClient(auth_key='u8arVdihlX_6p_pRuvRUwa94YmI4Zrny') as client:
+
+        for t in range(limit_query_times):
+            if ncount == 0:
+                rep = requests.get(url).json()
                 next_page_path = rep['next_page_path']
+                all_tickers.extend(rep['results'])
             else:
-                break
-        print(next_page_path)
+                url = default_host + next_page_path
+                rep = requests.get(url).json()
+                all_tickers.extend(rep['results'])
+                if rest > 0 and 'next_page_path' in rep:
+                    next_page_path = rep['next_page_path']
+                else:
+                    break
+            print(next_page_path)
 
-        rest = limit_query_times - ncount
-        ncount += 1
-
-        with RESTClient(auth_key='u8arVdihlX_6p_pRuvRUwa94YmI4Zrny') as client:
+            rest = limit_query_times - ncount
+            ncount += 1
 
             for t in all_tickers:
                 cik = t['cik'] if 'cik' in t else ''
@@ -91,6 +92,12 @@ def polygon_all_tickers(request):
                     pass
 
     return JsonResponse({'message': 'query all tickers from Polygon.io'},  status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def polygon_all_tickers_v2(request):
+    tickers_all_detail.delay()
+    return JsonResponse({'message': 'send to background'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

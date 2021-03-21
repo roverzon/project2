@@ -2,10 +2,10 @@ from django.db import models
 from django.utils import timezone
 
 
-class Financials(models.Model):
+class Financial(models.Model):
     symbol = models.CharField(max_length=100)
     period = models.CharField(max_length=100)
-    calendarDate = models.DateTimeField()
+    calendarDate = models.DateTimeField(unique=True)
     reportPeriod = models.DateTimeField()
     updated = models.DateTimeField()
     dateKey = models.DateTimeField()
