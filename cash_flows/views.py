@@ -4,22 +4,22 @@ from cash_flows.models import CashFlow, cash_flow_fields_map
 from cash_flows.services import alpha_vantage_cash_flow_api
 from tickers.models import Ticker
 from cash_flows.serializers import CashFlowSerializer
-from cash_flows.tasks import alphavantage_cashflow_annualReport_async, alphavantage_cashflow_quarterlyReport_async
+from cash_flows.tasks import alpha_vantage_cashflow_annualReport_async, alpha_vantage_cashflow_quarterlyReport_async
 from rest_framework.decorators import api_view, permission_classes
 from collections import OrderedDict
 from random import sample
 
 
 @api_view(['GET'])
-def func1(request):
+def cashflow_async(request):
     sample_num = 20
     symbols = [(t.symbol, ) for t in Ticker.objects.all()]
     if sample_num > 0:
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
-    jobs = alphavantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
-    jobs.apply_async()
+    annual_jobs = alpha_vantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
+    annual_jobs.apply_async()
     return JsonResponse({'message': 'sent to the background'},  status=status.HTTP_200_OK)
 
 

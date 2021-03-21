@@ -50,7 +50,7 @@ class CashFlow(models.Model):
     cash_flow_field43 = models.DateTimeField()
 
     class Meta:
-        unique_together = ('symbol', 'fiscal_date_ending')
+        unique_together = ('symbol', 'cash_flow_field43')
 
 
 cash_flow_fields_map = {'changeInLiabilities':'cash_flow_field1',

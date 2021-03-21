@@ -1,18 +1,26 @@
-from django.shortcuts import render
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser
 from rest_framework import status
-
+from tickers.models import Ticker
 from income_statements.models import Income
+from income_statements.services import alpha_vantage_income_statement_api
+from income_statements.tasks import alpha_vantage_income_statement_annualReport_async, alpha_vantage_income_statement_quarterlyReport_async
 from income_statements.serializers import IncomeSerializer
 from rest_framework.decorators import api_view
-
-from alpha_vantage.fundamentaldata import FundamentalData
-from datetime import datetime
 from collections import OrderedDict
+from random import sample
 
-import pandas as pd
 
+@api_view(['GET'])
+def income_statement_async(request):
+    sample_num = 20
+    symbols = [(t.symbol, ) for t in Ticker.objects.all()]
+    if sample_num > 0:
+        symbols = sample(symbols, sample_num)
+    else:
+        symbols = symbols
+    annual_jobs = alpha_vantage_income_statement_annualReport_async.chunks(symbols, 10)
+    annual_jobs.apply_async()
+    return JsonResponse({'message': 'sent to the background'},  status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def income_list(request):
@@ -76,122 +84,14 @@ def symbol_income_detail(request, symbol, fyear):
 
 
 @api_view(['GET'])
-def income_init_annual(request):
-
+def alpha_vantage_income_statement_annual(request, symbol):
     if request.method == 'GET':
-        symbol = request.GET.get('symbol')
-
-        data = FundamentalData(key='I7WB8M63PERU90OY', output_format='pandas')
-        qincomes, vasymbol = data.get_income_statement_annual(symbol=symbol)
-
-        for fical in qincomes['fiscalDateEnding']:
-            income = qincomes[qincomes['fiscalDateEnding'] == fical]
-
-            for col in income.columns:
-                if col not in ['fiscalDateEnding', 'reportedCurrency']:
-                    if income[col].values[0] == 'None':
-                        income[col] = 0.0
-                    else:
-                        pass
-                else:
-                    pass
-
-            inc = Income(
-                symbol=symbol,
-                report_type='quarterlyReport',
-                fiscal_date_ending= datetime.strptime(income['fiscalDateEnding'].values[0], '%Y-%m-%d'),
-                fiscal_year=income['fiscalDateEnding'].values[0].split('-')[0],
-                reported_currency=income['reportedCurrency'].values[0],
-                total_revenue=income['totalRevenue'].values[0],
-                total_operating_expense=income['totalOperatingExpense'].values[0],
-                cost_of_revenue=income['costOfRevenue'].values[0],
-                gross_profit=income['grossProfit'].values[0],
-                ebit=income['ebit'].values[0],
-                net_income=income['netIncome'].values[0],
-                research_and_development=income['researchAndDevelopment'].values[0],
-                effect_of_accounting_charges=income['effectOfAccountingCharges'].values[0],
-                income_before_tax=income['incomeBeforeTax'].values[0],
-                minority_interest=income['minorityInterest'].values[0],
-                selling_general_administrative=income['sellingGeneralAdministrative'].values[0],
-                other_non_operating_income=income['otherNonOperatingIncome'].values[0],
-                operating_income=income['operatingIncome'].values[0],
-                other_operating_expense=income['otherOperatingExpense'].values[0],
-                interest_expense=income['interestExpense'].values[0],
-                tax_provision=income['taxProvision'].values[0],
-                interest_income=income['interestIncome'].values[0],
-                net_interest_income=income['netInterestIncome'].values[0],
-                extraordinary_items=income['extraordinaryItems'].values[0],
-                non_recurring=income['nonRecurring'].values[0],
-                other_items=income['otherItems'].values[0],
-                income_tax_expense=income['incomeTaxExpense'].values[0],
-                total_other_income_expense=income['totalOtherIncomeExpense'].values[0],
-                discontinued_operations=income['discontinuedOperations'].values[0],
-                net_income_from_continuing_operations=income['netIncomeFromContinuingOperations'].values[0],
-                net_income_applicable_to_common_shares=income['netIncomeApplicableToCommonShares'].values[0],
-                preferred_stock_and_other_adjustments=income['preferredStockAndOtherAdjustments'].values[0],
-            )
-
-            inc.save()
-
+        alpha_vantage_income_statement_api(symbol=symbol, report_type='annualReports')
         return JsonResponse({'message': 'Annual Data Save successlly'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def income_init_quarterly(request):
-
+def alpha_vantage_income_statement_quarterly(request, symbol):
     if request.method == 'GET':
-        symbol = request.GET.get('symbol')
-
-        data = FundamentalData(key='I7WB8M63PERU90OY', output_format='pandas')
-        qincomes, vasymbol = data.get_income_statement_quarterly(symbol=symbol)
-
-        for fical in qincomes['fiscalDateEnding']:
-            income = qincomes[qincomes['fiscalDateEnding'] == fical]
-
-            for col in income.columns:
-                if col not in ['fiscalDateEnding', 'reportedCurrency']:
-                    if income[col].values[0] == 'None':
-                        income[col] = 0.0
-                    else:
-                        pass
-                else:
-                    pass
-
-            inc = Income(
-                    symbol=symbol,
-                    report_type='quarterlyReport',
-                    fiscal_date_ending= datetime.strptime(income['fiscalDateEnding'].values[0], '%Y-%m-%d'),
-                    fiscal_year= income['fiscalDateEnding'].values[0].split('-')[0],
-                    reported_currency=income['reportedCurrency'].values[0],
-                    total_revenue=income['totalRevenue'].values[0],
-                    total_operating_expense=income['totalOperatingExpense'].values[0],
-                    cost_of_revenue=income['costOfRevenue'].values[0],
-                    gross_profit=income['grossProfit'].values[0],
-                    ebit=income['ebit'].values[0],
-                    net_income=income['netIncome'].values[0],
-                    research_and_development=income['researchAndDevelopment'].values[0],
-                    effect_of_accounting_charges=income['effectOfAccountingCharges'].values[0],
-                    income_before_tax=income['incomeBeforeTax'].values[0],
-                    minority_interest=income['minorityInterest'].values[0],
-                    selling_general_administrative=income['sellingGeneralAdministrative'].values[0],
-                    other_non_operating_income=income['otherNonOperatingIncome'].values[0],
-                    operating_income=income['operatingIncome'].values[0],
-                    other_operating_expense=income['otherOperatingExpense'].values[0],
-                    interest_expense=income['interestExpense'].values[0],
-                    tax_provision=income['taxProvision'].values[0],
-                    interest_income=income['interestIncome'].values[0],
-                    net_interest_income=income['netInterestIncome'].values[0],
-                    extraordinary_items=income['extraordinaryItems'].values[0],
-                    non_recurring=income['nonRecurring'].values[0],
-                    other_items=income['otherItems'].values[0],
-                    income_tax_expense=income['incomeTaxExpense'].values[0],
-                    total_other_income_expense=income['totalOtherIncomeExpense'].values[0],
-                    discontinued_operations=income['discontinuedOperations'].values[0],
-                    net_income_from_continuing_operations=income['netIncomeFromContinuingOperations'].values[0],
-                    net_income_applicable_to_common_shares=income['netIncomeApplicableToCommonShares'].values[0],
-                    preferred_stock_and_other_adjustments=income['preferredStockAndOtherAdjustments'].values[0],
-            )
-
-            inc.save()
-
+        alpha_vantage_income_statement_api(symbol=symbol, report_type='quarterlyReports')
         return JsonResponse({'message': 'Quarterly Data Save successlly'},  status=status.HTTP_200_OK)
