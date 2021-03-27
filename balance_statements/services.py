@@ -4,6 +4,7 @@ import requests as req
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util import Retry
 
+
 def alpha_vantage_balance_sheet_api(symbol, report_type):
     logging.basicConfig(level=logging.DEBUG)
     API_KEY = 'I7WB8M63PERU90OY'
@@ -22,7 +23,6 @@ def alpha_vantage_balance_sheet_api(symbol, report_type):
             balance_sheets = json_response[report_type]
 
             for balance_sheet in balance_sheets:
-
                 for field in balance_sheet.keys():
                     if field not in balance_sheet_map.keys():
                         raise ValueError(f'Field: {field} is not in models'.format(field))

@@ -29,6 +29,7 @@ def alpha_vantage_overview_api(symbol):
                             overview[overview_fields_map[key]] = overview[key]
 
             ov = Overview(
+                symbol=symbol,
                 overview_field1=overview['overview_field1'],
                 overview_field2=overview['overview_field2'],
                 overview_field3=overview['overview_field3'],

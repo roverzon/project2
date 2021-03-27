@@ -3,6 +3,7 @@ from django.utils import timezone
 
 
 class Overview(models.Model):
+    symbol=models.CharField(max_length=255, blank=False, default='')
     overview_field1=models.CharField(max_length=255, blank=False, default='')
     overview_field2=models.CharField(max_length=255, blank=False, default='')
     overview_field3=models.CharField(max_length=255, blank=False, default='')
@@ -69,14 +70,14 @@ class Overview(models.Model):
         unique_together = ('overview_field1', 'overview_field58')
 
 
-overview_fields_map = {'Symbol' : 'overview_field1',
-                       'AssetType' : 'overview_field2',
-                       'Name' : 'overview_field3',
-                       'Description' : 'overview_field4',
-                       'Exchange' : 'overview_field5',
-                       'Currency' : 'overview_field6',
-                       'Sector' : 'overview_field7',
-                       'Industry' : 'overview_field8',
+overview_fields_map = {'Symbol': 'overview_field1',
+                       'AssetType': 'overview_field2',
+                       'Name': 'overview_field3',
+                       'Description': 'overview_field4',
+                       'Exchange': 'overview_field5',
+                       'Currency': 'overview_field6',
+                       'Sector': 'overview_field7',
+                       'Industry': 'overview_field8',
                        'FullTimeEmployees' : 'overview_field9',
                        'FiscalYearEnd' : 'overview_field10',
                        'LatestQuarter' : 'overview_field11',
