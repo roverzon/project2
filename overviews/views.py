@@ -6,7 +6,65 @@ from overviews.models import Overview
 from overviews.tasks import alpha_vantage_company_overview_async, alpha_vantage_company_overview_and_financials_async
 from overviews.tasks import alpha_vantage_overview_api
 from overviews.serializers import OverviewSerializer
+from balance_sheets.tasks import alpha_vantage_balance_sheet_annualReport_async, alpha_vantage_balance_sheet_quarterlyReport_async
+from cash_flows.tasks import alpha_vantage_cashflow_annualReport_async, alpha_vantage_cashflow_quarterlyReport_async
+from income_statements.tasks import alpha_vantage_income_statement_annualReport_async, alpha_vantage_income_statement_quarterlyReport_async
+from pgfinancials.tasks import polygon_financial_async
 from rest_framework.decorators import api_view
+
+
+@api_view(['GET'])
+def overview_init(request):
+    start_ = '2021-03-15'
+    end_ = '2021-03-20'
+    white_list = ['BABA', 'MSFT', 'SPLK']
+    symbols = [(t.symbol, ) for t in Ticker.objects.all() if t.symbol in white_list]
+    trading = [(t.symbol, start_, end_) for t in Ticker.objects.all() if t.symbol in white_list]
+
+    '''
+        Overview data
+    '''
+    overview_jobs = alpha_vantage_company_overview_async.chunks(symbols, 10)
+    overview_jobs.apply_async()
+
+    '''
+        Alpha Vantage Balance Sheet data
+    '''
+    balance_sheet_annual_jobs = alpha_vantage_balance_sheet_annualReport_async.chunks(symbols, 10)
+    balance_sheet_quarterly_jobs = alpha_vantage_balance_sheet_quarterlyReport_async.chunks(symbols, 10)
+    balance_sheet_annual_jobs.apply_async()
+    balance_sheet_quarterly_jobs.apply_async()
+
+    '''
+        Alpha Vantage Cash Flow Sheet data
+    '''
+    cash_flow_annual_jobs = alpha_vantage_cashflow_annualReport_async.chunks(symbols, 10)
+    cash_flow_quarterly_jobs = alpha_vantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
+    cash_flow_annual_jobs.apply_async()
+    cash_flow_quarterly_jobs.apply_async()
+
+    '''
+        Alpha Vantage Income Statement Sheet data
+    '''
+    income_statement_annual_jobs = alpha_vantage_income_statement_annualReport_async.chunks(symbols, 10)
+    income_statement_quarterly_jobs = alpha_vantage_income_statement_quarterlyReport_async.chunks(symbols, 10)
+    income_statement_annual_jobs.apply_async()
+    income_statement_quarterly_jobs.apply_async()
+
+    '''
+        Polygon Financials data
+    '''
+    polygon_financial_jobs = polygon_financial_async.chunks(symbols, 10)
+    polygon_financial_jobs.apply_async()
+
+    '''
+        Polygon Trading data
+    '''
+    open_and_close_job = polygon_tickers_open_and_close_async.chunks(trading, 10)
+    open_and_close_job.apply_async()
+
+    return JsonResponse({'message': 'sent to background'},  status=status.HTTP_200_OK)
+
 
 
 @api_view(['GET'])

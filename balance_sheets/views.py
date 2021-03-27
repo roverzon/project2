@@ -1,10 +1,10 @@
 from django.http.response import JsonResponse
 from rest_framework import status
 from balance_sheets.services import alpha_vantage_balance_sheet_api
-from balance_sheets.tasks import alphavantage_balance_sheet_annualReport_async, alphavantage_balance_sheet_quarterlyReport_async
 from balance_sheets.models import BalanceSheet
-from tickers.models import Ticker
+from balance_sheets.tasks import alpha_vantage_balance_sheet_annualReport_async
 from balance_sheets.serializers import BalanceSheetSerializer
+from tickers.models import Ticker
 from rest_framework.decorators import api_view
 from collections import OrderedDict
 from random import sample
@@ -18,7 +18,7 @@ def balancesheet_init_async(request):
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
-    annual_jobs = alphavantage_balance_sheet_annualReport_async.chunks(symbols, 10)
+    annual_jobs = alpha_vantage_balance_sheet_annualReport_async.chunks(symbols, 10)
     annual_jobs.apply_async()
     return JsonResponse({'message': 'sent to the background'},  status=status.HTTP_200_OK)
 
