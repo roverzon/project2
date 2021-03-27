@@ -1,11 +1,11 @@
 from open_and_close.models import OpenClose
 from stock_tas.models import CrossStarRecord
 from datetime import datetime, timedelta
+import pandas as pd
 
 
 def cross_star(symbol, date):
     tickers = OpenClose.objects.filter(symbol=symbol, date__gte=date-timedelta(days=5), date__lte=date)
-    volume_lift = 0.0
     if len(tickers)-1>0:
         ticker_trade = tickers[len(tickers)-1]
         ticker_trade_1 = tickers[len(tickers)-2]
@@ -16,7 +16,7 @@ def cross_star(symbol, date):
         high_and_low_lift_diff = ticker_trade.high - ticker_trade.low
 
         delta = 0.02
-        diff_time_delta = 10
+        diff_time_delta = 10.0
 
         diff_times = abs(high_and_low_lift_diff) / abs(close_and_open_diff) if close_and_open_diff != 0.0 else 0.0
         is_star = False
@@ -48,8 +48,14 @@ def cross_star(symbol, date):
             )
 
             try:
-                print(f'Ticker:{symbol} on Date: {date} '.format(symbol=symbol, date=date))
+                print(f'CROSS_STAR - Ticker:{symbol} on Date: {date} '.format(symbol=symbol, date=date))
                 record.save()
             except:
                 pass
         return is_star
+
+
+def cross_star_api(symbol, from_, end_):
+    dates = pd.bdate_range(start=from_, end=end_)
+    for date in dates:
+        cross_star(symbol=symbol, date=date)

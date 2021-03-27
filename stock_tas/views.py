@@ -1,5 +1,6 @@
 from django.http.response import JsonResponse
 from stock_tas.services import cross_star
+from stock_tas.tasks import cross_star_scanning_async
 from tickers.models import Ticker
 from rest_framework import status
 from datetime import datetime
@@ -24,4 +25,17 @@ def scan_ticker_cross_star(request):
         for pdate in dates:
             cross_star(symbol=symbol[0], date=pdate)
 
+    return JsonResponse({'message': f'success'}, status=status.HTTP_200_OK)
+
+
+def scan_ticker_cross_star_async(request):
+    white_list = [('BLDP', '2020-06-01', '2021-03-27'), ('BIDU', '2020-06-01','2021-03-27'), ('BE', '2020-06-01','2021-03-27'), ('TSLA', '2020-06-01','2021-03-27'),
+                  ('PDD', '2020-06-01', '2021-03-27'), ('PLTR','2020-06-01','2021-03-27' ), ('X','2020-06-01','2021-03-27'), ('SNOW', '2020-06-01','2021-03-27'),
+                  ('TSM', '2020-06-01', '2021-03-27'), ('SCCO', '2020-06-01','2021-03-27'), ('JD', '2020-06-01','2021-03-27'), ('INTC', '2020-06-01','2021-03-27'),
+                  ('ADBE', '2020-06-01', '2021-03-27'), ('SE', '2020-06-01','2021-03-27'), ('PYPL', '2020-06-01','2021-03-27'), ('BAC', '2020-06-01','2021-03-27')]
+
+    # symbols = [(t.symbol,'2021-03-02', '2021-03-20') for t in Ticker.objects.all()]
+
+    scanner_jobs = cross_star_scanning_async.chunks(white_list, 10)
+    scanner_jobs.apply_async()
     return JsonResponse({'message': f'success'}, status=status.HTTP_200_OK)
