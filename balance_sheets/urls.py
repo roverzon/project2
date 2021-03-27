@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from balance_statements import views
+from balance_sheets import views
 
 
 urlpatterns = [

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from balance_statements.models import BalanceSheet
+from balance_sheets.models import BalanceSheet
 
 
 class BalanceSheetSerializer(serializers.ModelSerializer):

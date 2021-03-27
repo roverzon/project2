@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'overviews.apps.OverviewsConfig',
     'income_statements.apps.IncomeStatementsConfig',
     'cash_flows.apps.CashFlowsConfig',
-    'balance_statements.apps.BalanceStatementsConfig',
+    'balance_sheets.apps.BalanceStatementsConfig',
     'open_and_close.apps.OpenAndCloseConfig',
     'portfolios.apps.PortfoliosConfig',
     'positions.apps.PositionsConfig',

@@ -1,6 +1,6 @@
 from djangoProject.celery import app
 from overviews.services import alpha_vantage_overview_api
-from balance_statements.services import alpha_vantage_balance_sheet_api
+from balance_sheets.services import alpha_vantage_balance_sheet_api
 from cash_flows.services import alpha_vantage_cash_flow_api
 from income_statements.services import alpha_vantage_income_statement_api
 

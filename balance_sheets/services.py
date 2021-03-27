@@ -1,5 +1,5 @@
 import logging
-from balance_statements.models import BalanceSheet, balance_sheet_map
+from balance_sheets.models import BalanceSheet, balance_sheet_map
 from pgfinancials.models import NoFinancialRecord
 import requests as req
 from requests.adapters import HTTPAdapter

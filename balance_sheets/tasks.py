@@ -1,5 +1,5 @@
 from djangoProject.celery import app
-from balance_statements.services import alpha_vantage_balance_sheet_api
+from balance_sheets.services import alpha_vantage_balance_sheet_api
 
 
 @app.task

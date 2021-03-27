@@ -1,10 +1,10 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from balance_statements.services import alpha_vantage_balance_sheet_api
-from balance_statements.tasks import alphavantage_balance_sheet_annualReport_async, alphavantage_balance_sheet_quarterlyReport_async
-from balance_statements.models import BalanceSheet
+from balance_sheets.services import alpha_vantage_balance_sheet_api
+from balance_sheets.tasks import alphavantage_balance_sheet_annualReport_async, alphavantage_balance_sheet_quarterlyReport_async
+from balance_sheets.models import BalanceSheet
 from tickers.models import Ticker
-from balance_statements.serializers import BalanceSheetSerializer
+from balance_sheets.serializers import BalanceSheetSerializer
 from rest_framework.decorators import api_view
 from collections import OrderedDict
 from random import sample

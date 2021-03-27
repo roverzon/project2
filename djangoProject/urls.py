@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^', include('overviews.urls')),
     url(r'^', include('income_statements.urls')),
     url(r'^', include('cash_flows.urls')),
-    url(r'^', include('balance_statements.urls')),
+    url(r'^', include('balance_sheets.urls')),
     url(r'^', include('open_and_close.urls')),
     url(r'^', include('portfolios.urls')),
     url(r'^', include('positions.urls')),
