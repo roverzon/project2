@@ -15,8 +15,8 @@ from rest_framework.decorators import api_view
 
 @api_view(['GET'])
 def overview_init(request):
-    start_ = '2021-03-15'
-    end_ = '2021-03-20'
+    start_ = '2020-06-01'
+    end_ = '2021-03-27'
     white_list = ['BABA', 'MSFT', 'SPLK']
     symbols = [(t.symbol, ) for t in Ticker.objects.all() if t.symbol in white_list]
     trading = [(t.symbol, start_, end_) for t in Ticker.objects.all() if t.symbol in white_list]
@@ -97,20 +97,20 @@ def overview_detail(request, symbol):
 def alpha_vantage_company_overview(request, symbol):
     if request.method == 'GET':
         alpha_vantage_overview_api(symbol=symbol)
-        return JsonResponse({'message': f'Overview:{symbol} save successflly'.format(symbol)},  status=status.HTTP_200_OK)
+        return JsonResponse({'message': f'Overview:{symbol} save successflly'.format(symbol=symbol)},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def alpha_vantage_company_overview_v2(request, symbol):
     if request.method == 'GET':
         alpha_vantage_company_overview_async(symbol=symbol)
-        return JsonResponse({'message': f'Overview:{symbol} sent to the background'.format(symbol)},  status=status.HTTP_200_OK)
+        return JsonResponse({'message': f'Overview:{symbol} sent to the background'.format(symbol=symbol)},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def alpha_vantage_company_overview_and_financials(request, symbol):
     if request.method == 'GET':
         alpha_vantage_company_overview_and_financials_async(symbol)
-        return JsonResponse({'message': f'{symbol} overview and financials sent to the background'.format(symbol)},  status=status.HTTP_200_OK)
+        return JsonResponse({'message': f'{symbol} overview and financials sent to the background'.format(symbol=symbol)},  status=status.HTTP_200_OK)
 
 

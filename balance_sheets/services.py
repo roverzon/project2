@@ -9,17 +9,18 @@ from requests.packages.urllib3.util import Retry
 def alpha_vantage_balance_sheet_api(symbol, report_type):
     logging.basicConfig(level=logging.DEBUG)
     API_KEY = 'I7WB8M63PERU90OY'
-    BASE_URL = f'https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={symbol}&apikey={API_KEY}'.format(symbol, API_KEY)
+    BASE_URL = f'https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={symbol}&apikey={API_KEY}'.\
+        format(symbol=symbol, API_KEY=API_KEY)
     try:
         s = req.Session()
-        retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+        retries = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
         s.mount('https://', HTTPAdapter(max_retries=retries))
         res = s.get(BASE_URL)
         json_response = res.json()
         if 'symbol' not in json_response:
             record = NoFinancialRecord(symbol=symbol, source='Alpha_Vantage', api_name='BALANCE_SHEET')
             record.save()
-            print(f'Ticker: {symbol} No Balance Data'.format(symbol))
+            print(f'Ticker: {symbol} No Balance Data'.format(symbol=symbol))
         else:
             symbol = json_response['symbol']
             balance_sheets = json_response[report_type]
@@ -27,7 +28,7 @@ def alpha_vantage_balance_sheet_api(symbol, report_type):
             for balance_sheet in balance_sheets:
                 for field in balance_sheet.keys():
                     if field not in balance_sheet_map.keys():
-                        raise ValueError(f'Field: {field} is not in models'.format(field))
+                        raise ValueError(f'Field: {field} is not in models'.format(field=field))
 
                 for key in balance_sheet_map.keys():
                     if key not in balance_sheet:
@@ -110,7 +111,8 @@ def alpha_vantage_balance_sheet_api(symbol, report_type):
 
                 try:
                     balance_sheet.save()
-                    print(f'Ticker: {symbol} & {report_type} Balance Sheet on {fiscal_date} Data Saved'.format(symbol, fiscal_date, report_type))
+                    print(f'Ticker: {symbol} & {report_type} Balance Sheet on {fiscal_date} Data Saved'.
+                          format(symbol=symbol, fiscal_date=fiscal_date, report_type=report_type))
                 except:
                     pass
 

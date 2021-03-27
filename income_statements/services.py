@@ -7,27 +7,27 @@ from requests.packages.urllib3.util import Retry
 
 def alpha_vantage_income_statement_api(symbol, report_type):
     API_KEY = 'I7WB8M63PERU90OY'
-    BASE_URL = f'https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={symbol}&apikey={API_KEY}'.format(symbol, API_KEY)
+    BASE_URL = f'https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={symbol}&apikey={API_KEY}'.\
+        format(symbol=symbol, API_KEY=API_KEY)
     try:
         s = req.Session()
-        retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+        retries = Retry(total=3, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
         s.mount('https://', HTTPAdapter(max_retries=retries))
         res = s.get(BASE_URL)
         json_response = res.json()
         if 'symbol' not in json_response:
             record = NoFinancialRecord(symbol=symbol, source='Alpha_Vantage', api_name='BALANCE_SHEET')
             record.save()
-            print(f'Ticker: {symbol} No Income Statement Data'.format(symbol))
+            print(f'Ticker: {symbol} No Income Statement Data'.format(symbol=symbol))
             pass
         else:
             symbol = json_response['symbol']
             income_statements = json_response[report_type]
 
             for income_statement in income_statements:
-
                 for field in income_statement.keys():
                     if field not in income_statment_fields_map.keys():
-                        raise ValueError(f'Field: {field} is not in models'.format(field))
+                        raise ValueError(f'Field: {field} is not in models'.format(field=field))
 
                 for key in income_statment_fields_map.keys():
                     if key not in income_statement:
@@ -87,7 +87,9 @@ def alpha_vantage_income_statement_api(symbol, report_type):
 
                 try:
                     income.save()
-                    print(f'Ticker: {symbol} & {report_type} income statement on {fiscal_date} Data Saved'.format(symbol, fiscal_date, report_type))
+                    msg = f'Ticker: {symbol} & {report_type} income statement on {fiscal_date} Data Saved'\
+                        .format(symbol=symbol, fiscal_date=fiscal_date, report_type=report_type)
+                    print(msg)
                 except:
                     pass
 
