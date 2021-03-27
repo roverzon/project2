@@ -1,7 +1,7 @@
 from django.http.response import JsonResponse
 from rest_framework import status
 from overviews.models import Overview
-from overviews.tasks import alpha_vantage_company_overview_async
+from overviews.tasks import alpha_vantage_company_overview_async, alpha_vantage_company_overview_and_financials_async
 from overviews.tasks import alpha_vantage_overview_api
 from overviews.serializers import OverviewSerializer
 from rest_framework.decorators import api_view
@@ -41,7 +41,14 @@ def alpha_vantage_company_overview(request, symbol):
 
 
 @api_view(['GET'])
-def alpha_vantage_company_overview_aync(request, symbol):
+def alpha_vantage_company_overview_v2(request, symbol):
     if request.method == 'GET':
         alpha_vantage_company_overview_async(symbol=symbol)
         return JsonResponse({'message': f'Overview:{symbol} sent to the background'.format(symbol)},  status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def alpha_vantage_company_overview_and_financials(request, symbol):
+    if request.method == 'GET':
+        alpha_vantage_company_overview_and_financials_async(symbol)
+        return JsonResponse({'message': f'{symbol} overview and financials sent to the background'.format(symbol)},  status=status.HTTP_200_OK)

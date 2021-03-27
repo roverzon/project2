@@ -48,13 +48,16 @@ class CashFlow(models.Model):
     cash_flow_field41 = models.FloatField(default=0.0)
     cash_flow_field42 = models.CharField(max_length=255, default='USD')
     cash_flow_field43 = models.DateTimeField()
+    cash_flow_field44 = models.FloatField(default=0.0)
+    cash_flow_field45 = models.FloatField(default=0.0)
+    cash_flow_field46 = models.FloatField(default=0.0)
 
     class Meta:
         unique_together = ('symbol', 'cash_flow_field43')
 
 
 cash_flow_fields_map = {'changeInLiabilities':'cash_flow_field1',
-                        'OperatingCashflow':'cash_flow_field2',
+                        'operatingCashflow':'cash_flow_field2',
                         'paymentsForOperatingActivities':'cash_flow_field3',
                         'proceedsFromOperatingActivities':'cash_flow_field4',
                         'changeInOperating_liabilities':'cash_flow_field5',
@@ -95,4 +98,7 @@ cash_flow_fields_map = {'changeInLiabilities':'cash_flow_field1',
                         'changeInCashAndCashEquivalent ':'cash_flow_field40',
                         'otherCashflowFromInvestment':'cash_flow_field41',
                         'reportedCurrency': 'cash_flow_field42',
-                        'fiscalDateEnding': 'cash_flow_field43'}
+                        'fiscalDateEnding': 'cash_flow_field43',
+                        'changeInOperatingLiabilities': 'cash_flow_field44',
+                        'changeInOperatingAssets': 'cash_flow_field45',
+                        'depreciationDepletionAndAmortization': 'cash_flow_field46',}

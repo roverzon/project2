@@ -63,6 +63,7 @@ class Overview(models.Model):
     overview_field58=models.DateTimeField(default=timezone.now)
     overview_field59=models.CharField(max_length=255, null=True)
     overview_field60=models.CharField(max_length=255, null=True)
+    overview_field61=models.CharField(max_length=255, null=True)
 
     class Meta:
         unique_together = ('overview_field1', 'overview_field58')
@@ -127,4 +128,5 @@ overview_fields_map = {'Symbol' : 'overview_field1',
                        'LastSplitDate': 'overview_field57',
                        'created_at': 'overview_field58',
                        'Country': 'overview_field59',
-                       'Address': 'overview_field60',}
+                       'Address': 'overview_field60',
+                       'CIK': 'overview_field61',}

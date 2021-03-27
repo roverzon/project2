@@ -1,15 +1,21 @@
 from income_statements.models import Income, income_statment_fields_map
 import requests as req
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util import Retry
 
 
 def alpha_vantage_income_statement_api(symbol, report_type):
     API_KEY = 'I7WB8M63PERU90OY'
     BASE_URL = f'https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={symbol}&apikey={API_KEY}'.format(symbol, API_KEY)
     try:
-        res = req.get(BASE_URL)
+        s = req.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+        s.mount('https://', HTTPAdapter(max_retries=retries))
+        res = s.get(BASE_URL)
         json_response = res.json()
         if 'symbol' not in json_response:
             print(f'Ticker: {symbol} No Income Statement Data'.format(symbol))
+            print(json_response)
             pass
         else:
             symbol = json_response['symbol']
@@ -79,7 +85,7 @@ def alpha_vantage_income_statement_api(symbol, report_type):
 
                 try:
                     income.save()
-                    print(f'Ticker: {symbol} Income Statement on {fiscal_date} Data Saved'.format(symbol, fiscal_date))
+                    print(f'Ticker: {symbol} & {report_type} income statement on {fiscal_date} Data Saved'.format(symbol, fiscal_date, report_type))
                 except:
                     pass
 

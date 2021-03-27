@@ -1,12 +1,18 @@
+import logging
 from balance_statements.models import BalanceSheet, balance_sheet_map
 import requests as req
-
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util import Retry
 
 def alpha_vantage_balance_sheet_api(symbol, report_type):
+    logging.basicConfig(level=logging.DEBUG)
     API_KEY = 'I7WB8M63PERU90OY'
     BASE_URL = f'https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={symbol}&apikey={API_KEY}'.format(symbol, API_KEY)
     try:
-        res = req.get(BASE_URL)
+        s = req.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+        s.mount('https://', HTTPAdapter(max_retries=retries))
+        res = s.get(BASE_URL)
         json_response = res.json()
         if 'symbol' not in json_response:
             print(f'Ticker: {symbol} No Balance Data'.format(symbol))
@@ -102,7 +108,7 @@ def alpha_vantage_balance_sheet_api(symbol, report_type):
 
                 try:
                     balance_sheet.save()
-                    print(f'Ticker: {symbol} Balance Sheet on {fiscal_date} Data Saved'.format(symbol, fiscal_date))
+                    print(f'Ticker: {symbol} & {report_type} Balance Sheet on {fiscal_date} Data Saved'.format(symbol, fiscal_date, report_type))
                 except:
                     pass
 
