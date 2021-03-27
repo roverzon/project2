@@ -13,12 +13,12 @@ def polygon_financial_api(symbol):
             if len(financials) == 0:
                 record = NoFinancialRecord(symbol=symbol, source='Polygon', api_name='financial')
                 record.save()
-                print(f'Symbol:{symbol} has no data in Polygon.io'.format(symbol))
+                print(f'Symbol:{symbol} has no data in Polygon.io'.format(symbol=symbol))
             else:
                 for financial in financials:
                     for field in financial.keys():
                         if field not in pg_financial_map.keys():
-                            raise ValueError(f'Field: {field} is not in models'.format(field))
+                            raise ValueError(f'Field: {field} is not in models'.format(field=field))
                     for key in pg_financial_map.keys():
                         if key not in financial:
                             financial[pg_financial_map[key]] = 0.0
@@ -139,7 +139,12 @@ def polygon_financial_api(symbol):
                         pgfinancial_field109 = financial['pgfinancial_field109'],
                     )
 
-                    f.save()
-                    print(f'Ticker: {symbol} & {date_key} Financial Data Saved'.format(symbol, date_key))
+                    try:
+                        f.save()
+                        msg = f'Ticker: {symbol} & {date_key} Financial Data Saved'.format(
+                            symbol=symbol, date_key=date_key)
+                        print(msg)
+                    except:
+                        pass
         except:
-            ValueError(f'Symbol:{symbol} has no data in Polygon.io'.format(symbol))
+            ValueError(f'Symbol:{symbol} has no data in Polygon.io'.format(symbol=symbol))
