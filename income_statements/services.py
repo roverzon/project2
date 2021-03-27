@@ -1,4 +1,5 @@
 from income_statements.models import Income, income_statment_fields_map
+from pgfinancials.models import NoFinancialRecord
 import requests as req
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util import Retry
@@ -14,8 +15,9 @@ def alpha_vantage_income_statement_api(symbol, report_type):
         res = s.get(BASE_URL)
         json_response = res.json()
         if 'symbol' not in json_response:
+            record = NoFinancialRecord(symbol=symbol, source='Alpha_Vantage', api_name='BALANCE_SHEET')
+            record.save()
             print(f'Ticker: {symbol} No Income Statement Data'.format(symbol))
-            print(json_response)
             pass
         else:
             symbol = json_response['symbol']

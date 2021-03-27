@@ -1,7 +1,9 @@
 from cash_flows.models import CashFlow, cash_flow_fields_map
+from pgfinancials.models import NoFinancialRecord
 import requests as req
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util import Retry
+
 
 def alpha_vantage_cash_flow_api(symbol, report_type):
     API_KEY = 'I7WB8M63PERU90OY'
@@ -14,8 +16,9 @@ def alpha_vantage_cash_flow_api(symbol, report_type):
         json_response = res.json()
 
         if 'symbol' not in json_response:
+            record = NoFinancialRecord(symbol=symbol, source='Alpha_Vantage', api_name='CASH_FLOW')
+            record.save()
             print(f'Ticker: {symbol} No Cash Flow Data'.format(symbol))
-            pass
         else:
             symbol = json_response['symbol']
             cash_flows = json_response[report_type]
