@@ -11,18 +11,29 @@ from cash_flows.tasks import alpha_vantage_cashflow_annualReport_async, alpha_va
 from income_statements.tasks import alpha_vantage_income_statement_annualReport_async, alpha_vantage_income_statement_quarterlyReport_async
 from pgfinancials.tasks import polygon_financial_async
 from rest_framework.decorators import api_view
+from random import sample
 
 
 @api_view(['GET'])
 def overview_init(request):
-    start_ = '2020-06-01'
+    from_ = '2020-06-01'
     end_ = '2021-03-27'
-    white_list = ['BABA', 'MSFT', 'SPLK']
-    symbols = [(t.symbol, ) for t in Ticker.objects.all() if t.symbol in white_list]
-    trading = [(t.symbol, start_, end_) for t in Ticker.objects.all() if t.symbol in white_list]
+    white_list = [('BLDP', ), ('BIDU', ), ('BE', ), ('TSLA', ),
+                  ('PDD', ), ('PLTR', ), ('X',), ('SNOW', ),
+                  ('TSM', ), ('SCCO', ), ('JD', ), ('INTC', ),
+                  ('ADBE', ), ('SE', ), ('PYPL', ), ('BAC', )]
+
+    is_sampled = True
+    if is_sampled:
+        symbols = sample([(t.symbol, ) for t in Ticker.objects.all()], 20)
+        symbols.extend(white_list)
+    else:
+        symbols = [(t.symbol, ) for t in Ticker.objects.all()]
+
+    trading = [(s[0], from_, end_) for s in symbols]
 
     '''
-        Overview data
+        Alpha Vantage Overview data
     '''
     overview_jobs = alpha_vantage_company_overview_async.chunks(symbols, 10)
     overview_jobs.apply_async()

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'bank_accounts.apps.BankAccountsConfig',
     'virtual_accounts.apps.VirtualAccountsConfig',
     'stock_market_indexes.apps.StockMarketIndexesConfig',
+    'stock_tas.apps.StockTasConfig',
     'users',
     'corsheaders',
     'django_celery_monitor',

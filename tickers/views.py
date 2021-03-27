@@ -9,6 +9,7 @@ from tickers.models import Ticker, TickerDetail
 from tickers.tasks import tickers_all_detail
 import requests
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def polygon_all_tickers(request):
@@ -50,45 +51,43 @@ def polygon_all_tickers(request):
                 share_class_figi = t['share_class_figi'] if 'share_class_figi' in t else ''
                 currency_name = t['currency_name'] if 'currency_name' in t else ''
 
-                if Ticker.objects.filter(symbol=t['ticker']).count() == 0:
-                    ticker = Ticker(
-                        symbol=t['ticker'],
-                        name=t['name'],
-                        market=t['market'],
-                        locale=t['locale'],
-                        active=t['active'],
-                        cik=cik,
-                        composite_figi=composite_figi,
-                        share_class_figi=share_class_figi,
-                        currency_name=currency_name,
-                        last_updated_utc=t['last_updated_utc'],
-                        created_at=datetime.now().strftime('%Y-%m-%d')
-                    )
+                ticker = Ticker(
+                    symbol=t['ticker'],
+                    name=t['name'],
+                    market=t['market'],
+                    locale=t['locale'],
+                    active=t['active'],
+                    cik=cik,
+                    composite_figi=composite_figi,
+                    share_class_figi=share_class_figi,
+                    currency_name=currency_name,
+                    last_updated_utc=t['last_updated_utc'],
+                    created_at=datetime.now().strftime('%Y-%m-%d')
+                )
 
-                    try:
-                        ticker.save()
-                    except:
-                        pass
+                try:
+                    ticker.save()
+                    print(f"Ticker:{ticker} detail is saved".format(ticker=t['ticker']))
+                except:
+                    pass
 
-                    try:
-                        rep_detail = client.reference_ticker_details(symbol=t['ticker'])
-                        if rep_detail.sector is not None:
-                            tickerS = Ticker.objects.get(symbol=t['ticker'])
-                            ticker_detail = TickerDetail(
-                                ticker=tickerS,
-                                exchange=rep_detail.exchange,
-                                exchangeSymbol=rep_detail.exchange,
-                                industry=rep_detail.industry,
-                                sector=rep_detail.sector,
-                                tags=rep_detail.tags,
-                                similar=rep_detail.similar,
-                                list_date=rep_detail.listdate,
-                                updated_date=datetime.strptime(rep_detail.updated, '%d/%M/%Y').strftime('%Y-%m-%d')
-                            )
-                            ticker_detail.save()
-                    except:
-                        pass
-                else:
+                try:
+                    rep_detail = client.reference_ticker_details(symbol=t['ticker'])
+                    if rep_detail.sector is not None:
+                        tickerS = Ticker.objects.get(symbol=t['ticker'])
+                        ticker_detail = TickerDetail(
+                            ticker=tickerS,
+                            exchange=rep_detail.exchange,
+                            exchangeSymbol=rep_detail.exchange,
+                            industry=rep_detail.industry,
+                            sector=rep_detail.sector,
+                            tags=rep_detail.tags,
+                            similar=rep_detail.similar,
+                            list_date=rep_detail.listdate,
+                            updated_date=datetime.strptime(rep_detail.updated, '%d/%M/%Y').strftime('%Y-%m-%d')
+                        )
+                        ticker_detail.save()
+                except:
                     pass
 
     return JsonResponse({'message': 'query all tickers from Polygon.io'},  status=status.HTTP_200_OK)
