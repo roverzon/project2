@@ -9,8 +9,8 @@ app.config_from_object('django.conf:settings')
 
 app.autodiscover_tasks()
 app.conf.beat_schedule = {
-    'send-report-every-morning': {
-        'task': 'watchlists.tasks.send_watchlist_report',
-        'schedule': crontab(),
+    'print-message-ten-seconds': {
+        'task': 'print_msg_main',
+        'schedule': 10.0,
     },
 }

@@ -19,9 +19,9 @@ def overview_init(request):
     from_ = '2020-06-01'
     end_ = '2021-03-27'
     white_list = [('BLDP', ), ('BIDU', ), ('BE', ), ('TSLA', ),
-                  ('PDD', ), ('PLTR', ), ('X',), ('SNOW', ),
+                  ('PDD', ), ('PLTR', ), ('XPEV',), ('SNOW', ),
                   ('TSM', ), ('SCCO', ), ('JD', ), ('INTC', ),
-                  ('ADBE', ), ('SE', ), ('PYPL', ), ('BAC', )]
+                  ('ADBE', ), ('SE', ), ('PYPL', ), ('BAC', ), ('JPM', ), ('NIO', ), ('LI', )]
 
     is_sampled = True
     if is_sampled:
@@ -35,38 +35,38 @@ def overview_init(request):
     '''
         Alpha Vantage Overview data
     '''
-    overview_jobs = alpha_vantage_company_overview_async.chunks(symbols, 10)
-    overview_jobs.apply_async()
+    # overview_jobs = alpha_vantage_company_overview_async.chunks(symbols, 10)
+    # overview_jobs.apply_async()
 
     '''
         Alpha Vantage Balance Sheet data
     '''
-    balance_sheet_annual_jobs = alpha_vantage_balance_sheet_annualReport_async.chunks(symbols, 10)
-    balance_sheet_quarterly_jobs = alpha_vantage_balance_sheet_quarterlyReport_async.chunks(symbols, 10)
-    balance_sheet_annual_jobs.apply_async()
-    balance_sheet_quarterly_jobs.apply_async()
+    # balance_sheet_annual_jobs = alpha_vantage_balance_sheet_annualReport_async.chunks(symbols, 10)
+    # balance_sheet_quarterly_jobs = alpha_vantage_balance_sheet_quarterlyReport_async.chunks(symbols, 10)
+    # balance_sheet_annual_jobs.apply_async()
+    # balance_sheet_quarterly_jobs.apply_async()
 
     '''
         Alpha Vantage Cash Flow Sheet data
     '''
-    cash_flow_annual_jobs = alpha_vantage_cashflow_annualReport_async.chunks(symbols, 10)
-    cash_flow_quarterly_jobs = alpha_vantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
-    cash_flow_annual_jobs.apply_async()
-    cash_flow_quarterly_jobs.apply_async()
+    # cash_flow_annual_jobs = alpha_vantage_cashflow_annualReport_async.chunks(symbols, 10)
+    # cash_flow_quarterly_jobs = alpha_vantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
+    # cash_flow_annual_jobs.apply_async()
+    # cash_flow_quarterly_jobs.apply_async()
 
     '''
         Alpha Vantage Income Statement Sheet data
     '''
-    income_statement_annual_jobs = alpha_vantage_income_statement_annualReport_async.chunks(symbols, 10)
-    income_statement_quarterly_jobs = alpha_vantage_income_statement_quarterlyReport_async.chunks(symbols, 10)
-    income_statement_annual_jobs.apply_async()
-    income_statement_quarterly_jobs.apply_async()
+    # income_statement_annual_jobs = alpha_vantage_income_statement_annualReport_async.chunks(symbols, 10)
+    # income_statement_quarterly_jobs = alpha_vantage_income_statement_quarterlyReport_async.chunks(symbols, 10)
+    # income_statement_annual_jobs.apply_async()
+    # income_statement_quarterly_jobs.apply_async()
 
     '''
         Polygon Financials data
     '''
-    polygon_financial_jobs = polygon_financial_async.chunks(symbols, 10)
-    polygon_financial_jobs.apply_async()
+    # polygon_financial_jobs = polygon_financial_async.chunks(symbols, 10)
+    # polygon_financial_jobs.apply_async()
 
     '''
         Polygon Trading data
