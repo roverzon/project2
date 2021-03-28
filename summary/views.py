@@ -3,7 +3,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from summary.services import candle_chart_technical_api
 from datetime import datetime
-from json import dumps
 
 
 @api_view(['GET'])

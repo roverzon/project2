@@ -2,6 +2,7 @@ from django.http.response import JsonResponse
 from rest_framework import status
 from open_and_close.models import OpenClose
 from open_and_close.tasks import polygon_tickers_open_and_close_async
+from open_and_close.services import polygon_stock_previous_close
 from tickers.models import Ticker
 from open_and_close.serializers import OpenCloseSerializer
 from rest_framework.permissions import AllowAny
@@ -33,6 +34,13 @@ def open_and_close_detail(request, symbol):
 
 
 @api_view(['GET'])
+def last_stock_open_and_close(request, symbol):
+    if request.method == 'GET':
+        polygon_stock_previous_close(symbol=symbol)
+        return JsonResponse({'message': f'Symbol:{symbol} last data save'.format(symbol=symbol)}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def snapshot_all_tickers(request):
     if request.method == 'GET':
         with RESTClient(auth_key='u8arVdihlX_6p_pRuvRUwa94YmI4Zrny') as client:
@@ -40,5 +48,6 @@ def snapshot_all_tickers(request):
             tickers = rep.tickers
             trades = [{t['ticker']: t['date']} for t in tickers ]
 
-        return JsonResponse({'tickers': trades }, safe=False, )
+        return JsonResponse({'tickers': trades}, safe=False, )
+
 

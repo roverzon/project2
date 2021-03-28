@@ -9,8 +9,6 @@ class OpenClose(models.Model):
     low = models.FloatField()
     close = models.FloatField()
     volume = models.BigIntegerField()
-    afterHours = models.FloatField()
-    preMarket = models.FloatField()
 
     class Meta:
         unique_together = ('date', 'symbol')
