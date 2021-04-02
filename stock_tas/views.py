@@ -1,5 +1,5 @@
 from django.http.response import JsonResponse
-from stock_tas.services import ticker_trade_pattern
+from stock_tas.services import ticker_trade_pattern, stock_linear_trending_api
 from stock_tas.tasks import cross_star_scanning_async
 from tickers.models import Ticker
 from rest_framework import status
@@ -34,4 +34,9 @@ def scan_candle_pattern_async(request):
     scanner_jobs.apply_async()
     return JsonResponse({'message': f'success'}, status=status.HTTP_200_OK)
 
+
+def stock_linear_trending(request, symbol):
+    date = datetime.strptime(request.GET['date'], '%Y-%m-%d')
+    stock_linear_trending_api(symbol=symbol, date=date)
+    return JsonResponse({'message': f'calculating linear regression'}, status=status.HTTP_200_OK)
 

@@ -15,7 +15,7 @@ from polygon import RESTClient
 def open_and_close_all_tickers_v3(request):
     if request.method == 'GET':
         white_list = ['BILI', 'PLTR']
-        symbols = [(t.symbol,'2021-03-02', '2021-03-20') for t in Ticker.objects.all() if t.symbol in white_list]
+        symbols = [(t.symbol, '2021-03-02', '2021-03-20') for t in Ticker.objects.all() if t.symbol in white_list]
         jobs = polygon_tickers_open_and_close_async.chunks(symbols, 10)
         jobs.apply_async()
         return JsonResponse({'message': 'open_and_close sent to the background'},  status=status.HTTP_200_OK)
