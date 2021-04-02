@@ -162,30 +162,44 @@ def stock_linear_trending_api(symbol, date):
     time_delta = 50
     tickers = OpenClose.objects.filter(symbol=symbol, date__gte=date-timedelta(days=time_delta), date__lte=date).order_by('-date')
     close = pd.DataFrame([[t.date, t.close, t.volume ] for t in tickers], columns=["date", "close", "volume"]).set_index("date")
-    print(tickers)
+    last_20 = close['close'][:20]
+
+    _1 = np.quantile(last_20, q=0.25)
+    _2 = np.quantile(last_20, q=0.5)
+    _3 = np.quantile(last_20, q=0.75)
+
+    if close['close'][0] > _3:
+        q_l = 4
+    elif _2 <= close['close'][0] < _3:
+        q_l = 3
+    elif _1 <= close['close'][0] < _2:
+        q_l = 2
+    else:
+        q_l = 1
 
     if 5 < len(tickers) < 10:
-        CustomMACDStrategy = ta.Strategy(
+        CustomSMAStrategy = ta.Strategy(
             name="EMAs, BBs, and MACD",
             description="Non Multiprocessing Strategy by rename Columns",
             ta=[
                 {"kind": "sma", "length": 5},
             ]
         )
-        close.ta.strategy(CustomMACDStrategy)
+        close.ta.strategy(CustomSMAStrategy)
 
         trend = TrendingRecord(
             date=date,
             symbol=symbol,
             close=tickers[0].close,
             sma_5d=close['SMA_5'][-1],
+            quantile20=q_l,
             cross_sma5=tickers[0].close - close['SMA_5'][-1],
         )
 
         trend.save()
 
     if 10 <= len(tickers) < 20:
-        CustomMACDStrategy = ta.Strategy(
+        CustomSMAStrategy = ta.Strategy(
             name="EMAs, BBs, and MACD",
             description="Non Multiprocessing Strategy by rename Columns",
             ta=[
@@ -193,7 +207,7 @@ def stock_linear_trending_api(symbol, date):
                 {"kind": "sma", "length": 10},
             ]
         )
-        close.ta.strategy(CustomMACDStrategy)
+        close.ta.strategy(CustomSMAStrategy)
 
         trend = TrendingRecord(
             date=date,
@@ -201,6 +215,7 @@ def stock_linear_trending_api(symbol, date):
             close=tickers[0].close,
             sma_5d=close['SMA_5'][-1],
             sma_10d=close['SMA_10'][-1],
+            quantile20=q_l,
             cross_sma5=tickers[0].close - close['SMA_5'][-1],
             cross_sma10=tickers[0].close - close['SMA_10'][-1],
         )
@@ -208,7 +223,7 @@ def stock_linear_trending_api(symbol, date):
         trend.save()
 
     if 20 <= len(tickers) < 30:
-        CustomMACDStrategy = ta.Strategy(
+        CustomSMAStrategy = ta.Strategy(
             name="EMAs, BBs, and MACD",
             description="Non Multiprocessing Strategy by rename Columns",
             ta=[
@@ -217,14 +232,14 @@ def stock_linear_trending_api(symbol, date):
                 {"kind": "sma", "length": 20},
             ]
         )
-        close.ta.strategy(CustomMACDStrategy)
+        close.ta.strategy(CustomSMAStrategy)
 
         X = np.array([i for i in range(len(tickers[:20]))]).reshape((-1, 1))
         y = np.array([t.close for t in tickers[:20]])
         model = LinearRegression()
         reg = model.fit(X=X, y=y)
-        slope = round(reg.coef_, 5)
-        angle = round(np.rad2deg(np.arctan2(y[-1] - y[0], X[-1] - X[0])), 5)
+        slope = reg.coef_
+        angle = np.rad2deg(np.arctan2(y[-1] - y[0], X[-1] - X[0]))
 
         trend = TrendingRecord(
             date=date,
@@ -233,6 +248,7 @@ def stock_linear_trending_api(symbol, date):
             sma_5d=close['SMA_5'][-1],
             sma_10d=close['SMA_10'][-1],
             sma_20d=close['SMA_20'][-1],
+            quantile20=q_l,
             cross_sma5=tickers[0].close - close['SMA_5'][-1],
             cross_sma10=tickers[0].close - close['SMA_10'][-1],
             cross_sma20=tickers[0].close - close['SMA_20'][-1],
@@ -243,7 +259,7 @@ def stock_linear_trending_api(symbol, date):
         trend.save()
 
     if 30 <= len(tickers):
-        CustomMACDStrategy = ta.Strategy(
+        CustomSMAStrategy = ta.Strategy(
             name="EMAs, BBs, and MACD",
             description="Non Multiprocessing Strategy by rename Columns",
             ta=[
@@ -254,13 +270,13 @@ def stock_linear_trending_api(symbol, date):
             ]
         )
 
-        close.ta.strategy(CustomMACDStrategy)
+        close.ta.strategy(CustomSMAStrategy)
         X = np.array([i for i in range(len(tickers[:20]))]).reshape((-1, 1))
         y = np.array([t.close for t in tickers[:20]])
         model = LinearRegression()
         reg = model.fit(X=X, y=y)
-        slope = round(reg.coef_, 5)
-        angle = round(np.rad2deg(np.arctan2(y[-1] - y[0], X[-1] - X[0])), 5)
+        slope = reg.coef_
+        angle = np.rad2deg(np.arctan2(y[-1] - y[0], X[-1] - X[0]))
 
         trend = TrendingRecord(
             date=date,
@@ -270,6 +286,7 @@ def stock_linear_trending_api(symbol, date):
             sma_10d=close['SMA_10'][-1],
             sma_20d=close['SMA_20'][-1],
             sma_30d=close['SMA_30'][-1],
+            quantile20=q_l,
             cross_sma5=tickers[0].close - close['SMA_5'][-1],
             cross_sma10=tickers[0].close - close['SMA_10'][-1],
             cross_sma20=tickers[0].close - close['SMA_20'][-1],

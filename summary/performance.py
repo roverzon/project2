@@ -31,14 +31,14 @@ def custom_William(symbol, date):
     columns_name = ["date", "open", "high", "low", "close", "volume"]
     trade = pd.DataFrame(value, columns=columns_name).set_index("date")
 
-    CustomMACDStrategy = ta.Strategy(
+    CustomWillrStrategy = ta.Strategy(
         name="EMAs, BBs, and MACD",
         description="Non Multiprocessing Strategy by rename Columns",
         ta=[
-            {"kind": "macd", "fast": 8, "slow": 21},
-            {"kind": "macd", "fast": 12, "slow": 26},
-            {"kind": "macd", "fast": 14, "slow": 28},
+            {"kind": "willr", "length": 3},
+            {"kind": "willr", "length": 10},
+            {"kind": "willr", "length": 21},
         ]
     )
-    trade.ta.strategy(CustomMACDStrategy)
+    trade.ta.strategy(CustomWillrStrategy)
     print(trade)

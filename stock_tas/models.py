@@ -85,6 +85,7 @@ class TrendingRecord(models.Model):
     cross_sma10 = models.FloatField(default=0.0)
     cross_sma20 = models.FloatField(default=0.0)
     cross_sma30 = models.FloatField(default=0.0)
+    quantile20 = models.IntegerField(default=1)
     created_at = models.DateField(default=timezone.now)
 
     class Meta:
