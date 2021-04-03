@@ -1,8 +1,8 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from open_and_close.models import OpenClose
+from open_and_close.models import OpenClose, JobRecord
 from open_and_close.tasks import polygon_tickers_open_and_close_async
-from open_and_close.services import polygon_stock_previous_close
+from open_and_close.services import polygon_stock_previous_close, polygon_open_and_close_daily_api
 from tickers.models import Ticker
 from open_and_close.serializers import OpenCloseSerializer
 from rest_framework.permissions import AllowAny
@@ -14,11 +14,19 @@ from polygon import RESTClient
 @permission_classes([AllowAny])
 def open_and_close_all_tickers_v3(request):
     if request.method == 'GET':
-        white_list = ['BILI', 'PLTR']
-        symbols = [(t.symbol, '2021-03-02', '2021-03-20') for t in Ticker.objects.all() if t.symbol in white_list]
+        white_list = ['BILI', 'PLTR', 'JD']
+        symbols = [(t.symbol, '2020-06-01', '2021-02-25') for t in Ticker.objects.all() if t.symbol in white_list]
         jobs = polygon_tickers_open_and_close_async.chunks(symbols, 10)
         jobs.apply_async()
         return JsonResponse({'message': 'open_and_close sent to the background'},  status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def ticker_open_and_close_daily(request, symbol):
+    date = request.GET.get('date')
+    polygon_open_and_close_daily_api(symbol=symbol, date=date)
+    return JsonResponse({'message': 'open_and_close daily data'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -46,7 +54,7 @@ def snapshot_all_tickers(request):
         with RESTClient(auth_key='u8arVdihlX_6p_pRuvRUwa94YmI4Zrny') as client:
             rep = client.stocks_equities_snapshot_all_tickers()
             tickers = rep.tickers
-            trades = [{t['ticker']: t['date']} for t in tickers ]
+            trades = [{t['ticker']: t['date']} for t in tickers]
 
         return JsonResponse({'tickers': trades}, safe=False, )
 

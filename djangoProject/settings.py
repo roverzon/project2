@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'summary.apps.SummaryConfig',
     'users',
     'corsheaders',
-    'django_celery_monitor',
 ]
 
 REST_FRAMEWORK = {

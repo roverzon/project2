@@ -5,14 +5,19 @@ from open_and_close.models import OpenClose, JobRecord
 
 
 def polygon_open_and_close_api(symbol, from_, end_):
-    start_date = from_
-    end_date = end_
-    dates = pd.bdate_range(start=start_date, end=end_date)
+    records = JobRecord.objects.filter(name="open_and_close", type='daily')
+    dates = set([t.strftime('%Y-%m-%d') for t in pd.bdate_range(start=from_, end=end_)])
+
+    if len(records) > 0:
+        record_date = set([record.date for record in records])
+        needed_date = dates.difference(record_date)
+    else:
+        needed_date = dates
 
     with RESTClient(auth_key='u8arVdihlX_6p_pRuvRUwa94YmI4Zrny') as client:
-        for date in dates:
+        for date in needed_date:
             try:
-                rep = client.stocks_equities_daily_open_close(symbol=symbol, date=date.strftime('%Y-%m-%d'))
+                rep = client.stocks_equities_daily_open_close(symbol=symbol, date=date)
                 if rep.symbol != '':
                     openAndClose = OpenClose(
                         symbol=symbol,
@@ -56,6 +61,7 @@ def polygon_open_and_close_daily_api(symbol, date):
                     close=rep.close,
                     volume=rep.volume
                 )
+
                 text = f"Symbol:{symbol} at date {date}".format(symbol=symbol, date=date)
                 print(text)
                 openAndClose.save()
