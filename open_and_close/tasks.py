@@ -12,7 +12,7 @@ def polygon_tickers_open_and_close_async(symbol, from_, end_):
 @app.task(name='polygon_tickers_open_and_close_periodic')
 def polygon_tickers_open_and_close_periodic(date):
     if JobRecord.objects.filter(date=date).exists():
-        print(f"market open and close date on {date} is updated".format(date=date))
+        print(f"market open_and_close data on {date} is updated".format(date=date))
     else:
         symbols = [t.symbol for t in Ticker.objects.all()]
         for symbol in symbols:
