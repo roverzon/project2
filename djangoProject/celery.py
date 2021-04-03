@@ -13,7 +13,7 @@ today = datetime.now().strftime('%Y-%m-%d')
 app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'updated last date at 5 a.m. every day': {
-        'task': 'polygon_tickers_open_and_close_periodic',
+        'task': 'polygon_tickers_open_and_close_prev_periodic',
         'schedule': crontab(hour=5, minute=0),
         'args': (today,)
     },
