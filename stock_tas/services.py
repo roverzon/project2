@@ -9,7 +9,7 @@ import numpy as np
 time_delta = 50
 
 
-def ticker_trade_pattern(symbol, date):
+def stock_candle_pattern_api(symbol, date):
     tickers = OpenClose.objects.filter(symbol=symbol, date__gte=date-timedelta(days=time_delta), date__lte=date).order_by('-date')
     if len(tickers)-2 > 0:
         range_ = 0.68
@@ -155,7 +155,7 @@ def ticker_trade_pattern(symbol, date):
 def cross_star_api(symbol, from_, end_):
     dates = pd.bdate_range(start=from_, end=end_)
     for date in dates:
-        ticker_trade_pattern(symbol=symbol, date=date)
+        stock_candle_pattern_api(symbol=symbol, date=date)
 
 
 def stock_linear_trending_api(symbol, date):

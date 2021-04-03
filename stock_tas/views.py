@@ -1,5 +1,5 @@
 from django.http.response import JsonResponse
-from stock_tas.services import ticker_trade_pattern, stock_linear_trending_api
+from stock_tas.services import stock_candle_pattern_api, stock_linear_trending_api
 from stock_tas.tasks import cross_star_scanning_async
 from tickers.models import Ticker
 from rest_framework import status
@@ -15,7 +15,7 @@ white_list = [('BLDP', '2020-06-01', '2021-03-27'), ('BIDU', '2020-06-01','2021-
 
 def candle_pattern(request, symbol):
     date = datetime.strptime(request.GET['date'], '%Y-%m-%d')
-    ticker_trade_pattern(symbol=symbol, date=date)
+    stock_candle_pattern_api(symbol=symbol, date=date)
     return JsonResponse({'message': f'Ticker:{symbol} on {date}'.
                         format(symbol=symbol, date=date)}, status=status.HTTP_200_OK)
 
@@ -25,7 +25,7 @@ def scan_candle_pattern(request):
     dates = pd.bdate_range(start='2020-06-01', end='2021-03-27')
     for symbol in symbols:
         for pdate in dates:
-            ticker_trade_pattern(symbol=symbol[0], date=pdate)
+            stock_candle_pattern_api(symbol=symbol[0 ], date=pdate)
     return JsonResponse({'message': f'success'}, status=status.HTTP_200_OK)
 
 
