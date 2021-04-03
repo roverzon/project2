@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class OpenClose(models.Model):
@@ -12,6 +13,16 @@ class OpenClose(models.Model):
 
     class Meta:
         unique_together = ('date', 'symbol')
+
+
+class JobRecord(models.Model):
+    date = models.DateTimeField()
+    name = models.CharField(max_length=100, default='open_and_close')
+    type = models.CharField(max_length=100, default='daily')
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('date',)
 
 
 class SnapShotDay(models.Model):

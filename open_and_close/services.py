@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 from polygon import RESTClient
-from open_and_close.models import OpenClose
+from open_and_close.models import OpenClose, JobRecord
 
 
 def polygon_open_and_close_api(symbol, from_, end_):
@@ -26,6 +26,18 @@ def polygon_open_and_close_api(symbol, from_, end_):
                     text = f"Symbol:{symbol} at date {date}".format(symbol=symbol, date=date)
                     print(text)
                     openAndClose.save()
+
+                    try:
+                        job = JobRecord(
+                            date=date,
+                            name="open_and_close",
+                            type="daily",
+                        )
+
+                        job.save()
+                        print(f"Job_Record: Job record save successfully on {date}".format(date=date))
+                    except:
+                        print(f"Job_Record: Job record save failed on {date}".format(date=date))
             except:
                 print(f"Symbol:{symbol} has no trading data on {date}".format(symbol=symbol, date=date))
 
@@ -50,8 +62,17 @@ def polygon_stock_previous_close(symbol):
                 text = f"Symbol:{symbol} at date {date}".format(symbol=symbol, date=date)
                 openAndClose.save()
                 print(text)
+
+                try:
+                    job = JobRecord(
+                        date=date,
+                        name="open_and_close",
+                        type="daily",
+                    )
+
+                    job.save()
+                    print(f"Job_Record: Job record save successfully on {date}".format(date=date))
+                except:
+                    print(f"Job_Record: Job record save failed on {date}".format(date=date))
             except:
-                pass
-
-
-
+                print(f"Symbol:{symbol} has no trading data on {date}".format(symbol=symbol, date=date))
