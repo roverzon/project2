@@ -31,7 +31,7 @@ def polygon_tickers_open_and_close_daily_all_updated(from_, to_):
         record_date = set([record.date for record in records])
         needed_date = dates.difference(record_date)
     else:
-        needed_date = [to_]
+        needed_date = dates
 
     for date in needed_date:
         for symbol in symbols:
@@ -47,7 +47,7 @@ def polygon_tickers_open_and_close_daily_updated(symbol, from_, to_):
         record_date = set([record.date for record in records])
         needed_date = dates.difference(record_date)
     else:
-        needed_date = [to_]
+        needed_date = dates
 
     for date in needed_date:
         polygon_open_and_close_daily_api(symbol=symbol, date=date)
