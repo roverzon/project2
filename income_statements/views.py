@@ -3,7 +3,8 @@ from rest_framework import status
 from tickers.models import Ticker
 from income_statements.models import Income
 from income_statements.services import alpha_vantage_income_statement_api
-from income_statements.tasks import alpha_vantage_income_statement_annualReport_async, alpha_vantage_income_statement_quarterlyReport_async
+from income_statements.tasks import alpha_vantage_income_statement_annualReport_async, \
+    alpha_vantage_income_statement_quarterlyReport_async
 from income_statements.serializers import IncomeSerializer
 from rest_framework.decorators import api_view
 from collections import OrderedDict
@@ -11,18 +12,23 @@ from random import sample
 
 
 @api_view(['GET'])
-def income_statement_init_annual_async(request):
+def income_statement_init_async(request):
     is_sampled = True if request.GET.get('sampled') else False
     symbols = [(t.symbol, ) for t in Ticker.objects.all()]
+
     if is_sampled > 0:
         sample_num = 20
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
+
     annual_jobs = alpha_vantage_income_statement_annualReport_async.chunks(symbols, 10)
     annual_jobs.apply_async()
-    return JsonResponse({'message': 'INCOME_STATEMENT AnnualReport: sent to the background'},
-                        status=status.HTTP_200_OK)
+
+    quarterly_jobs = alpha_vantage_income_statement_quarterlyReport_async.chunks(symbols, 10)
+    quarterly_jobs.apply_async()
+
+    return JsonResponse({'message': 'INCOME_STATEMENT AnnualReport: sent to the background'},status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

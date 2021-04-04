@@ -4,7 +4,7 @@ from balance_sheets import views
 
 urlpatterns = [
     url(r'^api/balancesheets$', views.balancesheet_list),
-    url(r'^api/balancesheets/init/all$', views.balancesheet_init_annual_async),
+    url(r'^api/balancesheets/init/all$', views.balance_sheet_init_async),
     url(r'^api/balancesheets/(?P<symbol>[\w\-]+)$', views.symbol_balancesheet_list),
     url(r'^api/v2/balancesheets/annual/(?P<symbol>[\w\-]+)$', views.alpha_vantage_balancesheet_annual),
     url(r'^api/v2/balancesheets/quarterly/(?P<symbol>[\w\-]+)$', views.alpha_vantage_balancesheet_quarterly),

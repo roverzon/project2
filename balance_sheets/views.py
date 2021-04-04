@@ -2,7 +2,8 @@ from django.http.response import JsonResponse
 from rest_framework import status
 from balance_sheets.services import alpha_vantage_balance_sheet_api
 from balance_sheets.models import BalanceSheet
-from balance_sheets.tasks import alpha_vantage_balance_sheet_annualReport_async
+from balance_sheets.tasks import alpha_vantage_balance_sheet_annualReport_async, \
+    alpha_vantage_balance_sheet_quarterlyReport_async
 from balance_sheets.serializers import BalanceSheetSerializer
 from tickers.models import Ticker
 from rest_framework.decorators import api_view
@@ -11,21 +12,27 @@ from random import sample
 
 
 @api_view(['GET'])
-def balancesheet_init_annual_async(request):
+def balance_sheet_init_async(request):
     is_sampled = True if request.GET.get('sampled') else False
     symbols = [(t.symbol, ) for t in Ticker.objects.all()]
+
     if is_sampled:
         sample_num = 20
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
+
     annual_jobs = alpha_vantage_balance_sheet_annualReport_async.chunks(symbols, 10)
     annual_jobs.apply_async()
+
+    quarterly_jobs = alpha_vantage_balance_sheet_quarterlyReport_async.chunks(symbols, 10)
+    quarterly_jobs.apply_async()
+
     return JsonResponse({'message': 'BALANCE_SHEET AnnualReport: sent to the background'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def balancesheet_list(request):
+def balance_sheet_list(request):
     if request.method == 'GET':
         balancesheets = BalanceSheet.objects.all()
 
@@ -38,7 +45,7 @@ def balancesheet_list(request):
 
 
 @api_view(['GET'])
-def symbol_balancesheet_list(request, symbol):
+def symbol_balance_sheet_list(request, symbol):
     if request.method == 'GET':
         balancesheetT = OrderedDict()
         if symbol is not None:
@@ -101,7 +108,7 @@ def symbol_balancesheet_list(request, symbol):
 
 
 @api_view(['GET'])
-def balancesheet_detail(request, pk):
+def balance_sheet_detail(request, pk):
     try:
         balancesheet = BalanceSheet.objects.get(pk=pk)
 
@@ -114,14 +121,14 @@ def balancesheet_detail(request, pk):
 
 
 @api_view(['GET'])
-def alpha_vantage_balancesheet_annual(request, symbol):
+def alpha_vantage_balance_sheet_annual(request, symbol):
     if request.method == 'GET':
         alpha_vantage_balance_sheet_api(symbol=symbol, report_type='annualReports')
         return JsonResponse({'message': 'Annual Balance Sheet Data Save successlly'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def alpha_vantage_balancesheet_quarterly(request, symbol):
+def alpha_vantage_balance_sheet_quarterly(request, symbol):
     if request.method == 'GET':
         alpha_vantage_balance_sheet_api(symbol=symbol, report_type='quarterlyReports')
         return JsonResponse({'message': 'Quarterly Balance Sheet Data Save successlly'},  status=status.HTTP_200_OK)

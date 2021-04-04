@@ -4,28 +4,35 @@ from cash_flows.models import CashFlow, cash_flow_fields_map
 from cash_flows.services import alpha_vantage_cash_flow_api
 from tickers.models import Ticker
 from cash_flows.serializers import CashFlowSerializer
-from cash_flows.tasks import alpha_vantage_cashflow_annualReport_async, alpha_vantage_cashflow_quarterlyReport_async
+from cash_flows.tasks import alpha_vantage_cash_flow_annualReport_async,\
+    alpha_vantage_cash_flow_quarterlyReport_async
 from rest_framework.decorators import api_view, permission_classes
 from collections import OrderedDict
 from random import sample
 
 
 @api_view(['GET'])
-def cashflow_init_annual_async(request):
+def cash_flow_init_async(request):
     is_sampled = True if request.GET.get('sampled') else False
     symbols = [(t.symbol, ) for t in Ticker.objects.all()]
+
     if is_sampled > 0:
         sample_num = 20
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
-    annual_jobs = alpha_vantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
+
+    annual_jobs = alpha_vantage_cash_flow_annualReport_async.chunks(symbols, 10)
     annual_jobs.apply_async()
+
+    quarterly_jobs = alpha_vantage_cash_flow_quarterlyReport_async.chunks(symbols, 10)
+    quarterly_jobs.apply_async()
+
     return JsonResponse({'message': 'CASH_FLOW AnnualReport: sent to the background'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def cashflow_list(request):
+def cash_flow(request):
     if request.method == 'GET':
         cashflows = CashFlow.objects.all()
 
@@ -42,7 +49,7 @@ def cashflow_list(request):
 
 
 @api_view(['GET'])
-def symbol_cashflow_list(request, symbol):
+def symbol_cash_flow_list(request, symbol):
         if request.method == 'GET':
             cashflows = CashFlow.objects.filter(symbol=symbol)
             cashflowT = OrderedDict()
@@ -75,7 +82,7 @@ def symbol_cashflow_list(request, symbol):
 
 
 @api_view(['GET'])
-def cashflow_detail(request, pk):
+def cash_flow_detail(request, pk):
     try:
         cashflow = CashFlow.objects.get(pk=pk)
 
@@ -88,14 +95,14 @@ def cashflow_detail(request, pk):
 
 
 @api_view(['GET'])
-def alpha_vantage_cashflow_annual(request, symbol):
+def alpha_vantage_cash_flow_annual(request, symbol):
     if request.method == 'GET':
         alpha_vantage_cash_flow_api(symbol=symbol, report_type='annualReports')
         return JsonResponse({'message': 'AlphaVantage Annual Report saved successfully'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def alpha_vantage_cashflow_quarterly(request, symbol):
+def alpha_vantage_cash_flow_quarterly(request, symbol):
     if request.method == 'GET':
         alpha_vantage_cash_flow_api(symbol=symbol, report_type='quarterlyReports')
         return JsonResponse({'message': 'AlphaVantage Quarterly Report saved successfully'},  status=status.HTTP_200_OK)
