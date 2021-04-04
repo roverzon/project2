@@ -11,16 +11,17 @@ from random import sample
 
 
 @api_view(['GET'])
-def balancesheet_init_async(request):
-    sample_num = 20
+def balancesheet_init_annual_async(request):
+    is_sampled = True if request.GET.get('sampled') else False
     symbols = [(t.symbol, ) for t in Ticker.objects.all()]
-    if sample_num > 0:
+    if is_sampled:
+        sample_num = 20
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
     annual_jobs = alpha_vantage_balance_sheet_annualReport_async.chunks(symbols, 10)
     annual_jobs.apply_async()
-    return JsonResponse({'message': 'sent to the background'},  status=status.HTTP_200_OK)
+    return JsonResponse({'message': 'BALANCE_SHEET AnnualReport: sent to the background'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

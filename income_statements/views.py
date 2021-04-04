@@ -11,27 +11,33 @@ from random import sample
 
 
 @api_view(['GET'])
-def income_statement_async(request):
-    sample_num = 20
+def income_statement_init_annual_async(request):
+    is_sampled = True if request.GET.get('sampled') else False
     symbols = [(t.symbol, ) for t in Ticker.objects.all()]
-    if sample_num > 0:
+    if is_sampled > 0:
+        sample_num = 20
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
     annual_jobs = alpha_vantage_income_statement_annualReport_async.chunks(symbols, 10)
     annual_jobs.apply_async()
-    return JsonResponse({'message': 'sent to the background'},  status=status.HTTP_200_OK)
+    return JsonResponse({'message': 'INCOME_STATEMENT AnnualReport: sent to the background'},
+                        status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def income_list(request):
+    num_com = 0
     if request.method == 'GET':
         incomes = Income.objects.all()
         income_serializer = IncomeSerializer(incomes, many=True)
-        return JsonResponse(income_serializer.data, safe=False, )
+        return JsonResponse(income_serializer.data, safe=False,
+                            status=status.HTTP_200_OK )
 
     elif request.method == 'DELETE':
         count = Income.objects.all().delete()
-        return JsonResponse({'message': '{} Companies were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({'message': f'{num_com}Companies were deleted successfully!'.format(num_com=count[0])},
+                            status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

@@ -11,16 +11,17 @@ from random import sample
 
 
 @api_view(['GET'])
-def cashflow_async(request):
-    sample_num = 20
+def cashflow_init_annual_async(request):
+    is_sampled = True if request.GET.get('sampled') else False
     symbols = [(t.symbol, ) for t in Ticker.objects.all()]
-    if sample_num > 0:
+    if is_sampled > 0:
+        sample_num = 20
         symbols = sample(symbols, sample_num)
     else:
         symbols = symbols
     annual_jobs = alpha_vantage_cashflow_quarterlyReport_async.chunks(symbols, 10)
     annual_jobs.apply_async()
-    return JsonResponse({'message': 'sent to the background'},  status=status.HTTP_200_OK)
+    return JsonResponse({'message': 'CASH_FLOW AnnualReport: sent to the background'},  status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
