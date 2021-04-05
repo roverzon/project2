@@ -41,8 +41,10 @@ def ticker_price_return_async(request):
     ticker_price_return_period.delay()
     return JsonResponse({'Summary': 'Return of Price'},  status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 def ticker_price_percentile(request):
     date = request.GET['date']
     ticker_price_return_percentile_api(date=date)
     return JsonResponse({'Summary': 'Return of Price'},  status=status.HTTP_200_OK)
+

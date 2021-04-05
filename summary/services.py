@@ -82,24 +82,28 @@ def ticker_price_return_percentile_api(date):
         returns = pd.DataFrame(returns, columns=cols)
         returns.set_index('symbol', inplace=True)
         for symbol in returns.index:
+            percentiles = []
             for col in return_cols:
-                returns.loc[symbol, f'{col}_percentile'] = stats.percentileofscore(returns[col], returns.loc[symbol, col])/100.0
+                percentile = stats.percentileofscore(returns[col], returns.loc[symbol, col])/100.0
+                returns.loc[symbol, f'{col}_percentile'] = percentile
+                percentiles.append(percentile)
 
             percentile = TickerPerformancePercentile(
                 date=date,
                 symbol=symbol,
-                pr_7d_percentile=returns['price_return_7d_percentile'],
-                pr_14d_percentile=returns['price_return_14d_percentile'],
-                pr_30d_percentile=returns['price_return_30d_percentile'],
-                pr_60d_percentile=returns['price_return_60d_percentile'],
-                pr_90d_percentile=returns['price_return_90d_percentile'],
-                pr_180d_percentile=returns['price_return_180d_percentile'],
+                pr_7d_percentile=returns.loc[symbol, 'price_return_7d_percentile'],
+                pr_14d_percentile=returns.loc[symbol, 'price_return_14d_percentile'],
+                pr_30d_percentile=returns.loc[symbol, 'price_return_30d_percentile'],
+                pr_60d_percentile=returns.loc[symbol, 'price_return_60d_percentile'],
+                pr_90d_percentile=returns.loc[symbol, 'price_return_90d_percentile'],
+                pr_180d_percentile=returns.loc[symbol, 'price_return_180d_percentile'],
+                HandM=np.mean(percentiles)
             )
-
             try:
                 percentile.save()
-                print(f"Percentile:{symbol} saved".format(symbol=symbol))
+                print(f"Price Return Percentile:{symbol} saved successfully".format(symbol=symbol))
             except:
-                print(f"Percentile:{symbol} goes wrond".format(symbol=symbol))
+                print(f"Price Return Percentile:{symbol} goes wrong".format(symbol=symbol))
+
     else:
         print(f"Percentile: No data  ")

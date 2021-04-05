@@ -26,6 +26,7 @@ class TickerPerformancePercentile(models.Model):
     pr_60d_percentile = models.FloatField()
     pr_90d_percentile = models.FloatField()
     pr_180d_percentile = models.FloatField()
+    HandM = models.FloatField(default=0.0)
 
     class Meta:
         unique_together = ('date', 'symbol')
