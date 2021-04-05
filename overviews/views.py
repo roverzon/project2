@@ -9,7 +9,7 @@ from overviews.serializers import OverviewSerializer
 from balance_sheets.tasks import alpha_vantage_balance_sheet_annualReport_async, alpha_vantage_balance_sheet_quarterlyReport_async
 from cash_flows.tasks import alpha_vantage_cash_flow_annualReport_async, alpha_vantage_cash_flow_quarterlyReport_async
 from income_statements.tasks import alpha_vantage_income_statement_annualReport_async, alpha_vantage_income_statement_quarterlyReport_async
-from pgfinancials.tasks import polygon_financial_async
+from financials.tasks import polygon_financial_async
 from rest_framework.decorators import api_view
 from random import sample
 

@@ -2,7 +2,9 @@ from django.http.response import JsonResponse
 from rest_framework import status
 from open_and_close.models import OpenClose, JobRecord
 from open_and_close.tasks import polygon_tickers_open_and_close_async
-from open_and_close.services import polygon_stock_previous_close, polygon_open_and_close_daily_api
+from open_and_close.services import polygon_stock_previous_close, \
+    polygon_open_and_close_daily_api, \
+    polygon_open_and_close_aggregate_api
 from tickers.models import Ticker
 from tickers.banchmark_list import get_white_list
 from open_and_close.serializers import OpenCloseSerializer
@@ -26,7 +28,19 @@ def open_and_close_all_tickers_v3(request):
             symbols = [(t.symbol, from_, to_) for t in Ticker.objects.all() if t.symbol]
         jobs = polygon_tickers_open_and_close_async.chunks(symbols, 10)
         jobs.apply_async()
-        return JsonResponse({'message': 'open_and_close sent to the background'},  status=status.HTTP_200_OK)
+        return JsonResponse({'message': 'Daily:open_and_close sent to the background'},  status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def ticker_open_and_close_weekly(request, symbol):
+    if request.method == 'GET':
+        from_ = '2020-01-01'
+        to_ = '2021-03-01'
+        polygon_open_and_close_aggregate_api(symbol=symbol, from_=from_, end_=to_)
+        return JsonResponse({'message': 'Weekly:open_and_close  sent to the background'},  status=status.HTTP_200_OK)
+
+
 
 
 @api_view(['GET'])

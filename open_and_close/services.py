@@ -1,7 +1,21 @@
 import pandas as pd
 from datetime import datetime
 from polygon import RESTClient
+from datetime import datetime
 from open_and_close.models import OpenClose, JobRecord
+
+
+def polygon_open_and_close_aggregate_api(symbol, from_, end_):
+    with RESTClient(auth_key='u8arVdihlX_6p_pRuvRUwa94YmI4Zrny') as client:
+        rep = client.stocks_equities_aggregates(ticker=symbol,
+                                                multiplier=1,
+                                                timespan='week',
+                                                from_=from_,
+                                                to=end_,
+                                                limit=5000)
+        if hasattr(rep, 'results'):
+            for data in rep.results:
+                print((datetime.fromtimestamp(int(data['t'])/1000.0)), data['v'])
 
 
 def polygon_open_and_close_api(symbol, from_, end_):
@@ -18,7 +32,7 @@ def polygon_open_and_close_api(symbol, from_, end_):
         for date in needed_date:
             try:
                 rep = client.stocks_equities_daily_open_close(symbol=symbol, date=date)
-                if rep.symbol != '':
+                if hasattr(rep, 'symbol'):
                     openAndClose = OpenClose(
                         symbol=symbol,
                         date=date,

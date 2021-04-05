@@ -32,7 +32,7 @@ def cash_flow_init_async(request):
 
 
 @api_view(['GET'])
-def cash_flow(request):
+def cash_flow_list(request):
     if request.method == 'GET':
         cashflows = CashFlow.objects.all()
 

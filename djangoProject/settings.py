@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'positions.apps.PositionsConfig',
     'watchlists.apps.WatchlistsConfig',
     'tickers.apps.TickersConfig',
-    'pgfinancials.apps.PgfinancialsConfig',
+    'financials.apps.PgfinancialsConfig',
     'bank_accounts.apps.BankAccountsConfig',
     'virtual_accounts.apps.VirtualAccountsConfig',
     'stock_market_indexes.apps.StockMarketIndexesConfig',

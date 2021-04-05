@@ -1,4 +1,4 @@
-from pgfinancials.services import polygon_financial_api
+from financials.services import polygon_financial_api
 from djangoProject.celery import app
 
 

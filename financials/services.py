@@ -1,13 +1,14 @@
 import logging
 from polygon import RESTClient
-from pgfinancials.models import Financial,NoFinancialRecord, pg_financial_map
+from financials.models import Financial,NoFinancialRecord, pg_financial_map
+from pyEX import client
 
 
 def polygon_financial_api(symbol):
     logging.basicConfig(level=logging.DEBUG)
     with RESTClient(auth_key='u8arVdihlX_6p_pRuvRUwa94YmI4Zrny') as client:
         try:
-            rep = client.reference_stock_financials(symbol=symbol, limit=50)
+            rep = client.reference_stock_financials(symbol=symbol, limit=5000)
             financials = rep.results
 
             if len(financials) == 0:

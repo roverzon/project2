@@ -1,5 +1,5 @@
 from income_statements.models import Income, income_statment_fields_map
-from pgfinancials.models import NoFinancialRecord
+from financials.models import NoFinancialRecord
 import requests as req
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util import Retry

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from pgfinancials.models import Financial
+from financials.models import Financial
 
 
 class FinancialSerializer(serializers.ModelSerializer):

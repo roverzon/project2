@@ -6,7 +6,8 @@ def get_white_list():
     symbols = [
         'PLTR',
         'BILI',
-        'JD'
+        'JD',
+        'TSLA',
     ]
 
     return {
