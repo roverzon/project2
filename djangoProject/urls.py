@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^', include('balance_sheets.urls')),
     url(r'^', include('open_and_close.urls')),
     url(r'^', include('portfolios.urls')),
-    url(r'^', include('positions.urls')),
     url(r'^', include('watchlists.urls')),
     url(r'^', include('tickers.urls')),
     url(r'^', include('users.urls')),

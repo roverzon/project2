@@ -1,7 +1,59 @@
 import logging
+import pandas as pd
+import numpy as np
 from polygon import RESTClient
-from financials.models import Financial,NoFinancialRecord, pg_financial_map
-from pyEX import client
+from financials.models import Financial, NoFinancialRecord, pg_financial_map
+from scipy import stats
+
+
+def polygon_financial_percentile_api(symbols):
+    col = ['symbol', 'reference_date']
+    value_cols = [
+        'priceToEarningsRatio',
+        'priceToBookValue',
+        'priceSales',
+        'grossProfit',
+        'evToEbitda',
+        'evToGrossProfit'
+    ]
+    cols = col + value_cols
+    financial_dataframe = []
+    for symbol in symbols:
+        financials = Financial.objects.filter(symbol=symbol, pgfinancial_field1='YA',).order_by('-pgfinancial_field2')
+        if len(financials) > 0:
+            financial = financials[0]
+            ebitda = financial.pgfinancial_field31 * financial.pgfinancial_field91
+            ev_to_ebitda = round(financial.pgfinancial_field41 / ebitda, 5)
+            ev_to_gross_profit = round(financial.pgfinancial_field41 / financial.pgfinancial_field47, 5)
+
+            financial_dataframe.append([symbol,
+                                        financial.pgfinancial_field2,
+                                        financial.pgfinancial_field83,
+                                        financial.pgfinancial_field81,
+                                        financial.pgfinancial_field87,
+                                        financial.pgfinancial_field47,
+                                        ev_to_ebitda,
+                                        ev_to_gross_profit])
+        else:
+            financial_dataframe.append([symbol,
+                                        np.NaN,
+                                        np.NaN,
+                                        np.NaN,
+                                        np.NaN,
+                                        np.NaN,
+                                        np.NaN,
+                                        np.NaN,])
+
+    financial_dataframe = pd.DataFrame(financial_dataframe, columns=cols)
+    financial_dataframe.set_index('symbol', inplace=True)
+
+    for symbol in symbols:
+        for col in value_cols:
+            financial_dataframe.loc[symbol, f'{col}_percentile'.format(col=col)] = \
+                stats.percentileofscore(financial_dataframe[col], financial_dataframe.loc[symbol, col])/100.0
+
+    print(financial_dataframe)
+
 
 
 def polygon_financial_api(symbol):

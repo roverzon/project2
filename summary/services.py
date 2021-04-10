@@ -104,6 +104,5 @@ def ticker_price_return_percentile_api(date):
                 print(f"Price Return Percentile:{symbol} saved successfully".format(symbol=symbol))
             except:
                 print(f"Price Return Percentile:{symbol} goes wrong".format(symbol=symbol))
-
     else:
         print(f"Percentile: No data  ")

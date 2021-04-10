@@ -6,7 +6,7 @@ from virtual_accounts.models import VirtualAccount
 
 
 class Portfolio(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
@@ -19,8 +19,8 @@ class Portfolio(models.Model):
     win_rate = models.FloatField(default=0.0)
     odds = models.FloatField(default=0.0)
     periods = models.FloatField(default=0.0)
-    total_budget = models.FloatField()
-    start_date = models.DateTimeField()
+    total_budget = models.FloatField(default=0.0)
+    start_date = models.DateTimeField(default=timezone.now)
     expected_sold_date = models.DateTimeField()
     end_date = models.DateTimeField()
     portfolio_tags = ArrayField(models.CharField(max_length=10))
@@ -29,4 +29,16 @@ class Portfolio(models.Model):
     is_deleted = models.BooleanField(default=False)
     is_default = models.BooleanField(default=False)
 
+
+class Position(models.Model):
+    symbol = models.CharField(max_length=50)
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    shares = models.FloatField()
+    buy_price = models.FloatField()
+    budget = models.FloatField()
+    created_at = models.DateTimeField(default=timezone.now)
 

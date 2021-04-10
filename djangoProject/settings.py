@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'balance_sheets.apps.BalanceStatementsConfig',
     'open_and_close.apps.OpenAndCloseConfig',
     'portfolios.apps.PortfoliosConfig',
-    'positions.apps.PositionsConfig',
     'watchlists.apps.WatchlistsConfig',
     'tickers.apps.TickersConfig',
     'financials.apps.PgfinancialsConfig',

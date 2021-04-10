@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class TickerReturn(models.Model):
@@ -27,6 +28,26 @@ class TickerPerformancePercentile(models.Model):
     pr_90d_percentile = models.FloatField()
     pr_180d_percentile = models.FloatField()
     HandM = models.FloatField(default=0.0)
+
+    class Meta:
+        unique_together = ('date', 'symbol')
+
+
+class TickerValuePercentile(models.Model):
+    date = models.DateField()
+    symbol = models.CharField(max_length=10, blank=False)
+    timeframe = models.CharField(max_length=20, blank=False, default='daily')
+    performance_type = models.CharField(max_length=20, blank=False, default='trade')
+    value_fields1 = models.FloatField(default=0.0)
+    value_fields2 = models.FloatField(default=0.0)
+    value_fields3 = models.FloatField(default=0.0)
+    value_fields4 = models.FloatField(default=0.0)
+    value_fields5 = models.FloatField(default=0.0)
+    value_fields6 = models.FloatField(default=0.0)
+    value_fields7 = models.FloatField(default=0.0)
+    value_fields8 = models.FloatField(default=0.0)
+    value_score = models.FloatField(default=0.0)
+    created_at = models.DateField(default=timezone.now)
 
     class Meta:
         unique_together = ('date', 'symbol')
